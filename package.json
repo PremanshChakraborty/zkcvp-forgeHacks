@@ -1,0 +1,26 @@
+{
+  "name": "zkcvp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @zkcvp/web",
+    "build": "npm run build -w @zkcvp/web",
+    "test": "vitest run",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "verify": "npm run typecheck && npm run test && npm run check -w @zkcvp/design-system-ledger",
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "dotenv": "^17.4.2",
+    "patch-package": "^8.0.1",
+    "tsx": "^4.23.1",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.10"
+  }
+}
