@@ -1,0 +1,348 @@
+/* =============================================================================
+   ZKCVP · Ledger — Base
+
+   Reset, document defaults, typography primitives and layout helpers.
+   Everything here reads tokens; no literal colours, sizes or durations.
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Scroll-margin so anchored headings clear a sticky header. */
+  scroll-padding-top: var(--lg-space-7);
+}
+
+body {
+  background: var(--lg-canvas);
+  color: var(--lg-text);
+  font-family: var(--lg-font-sans);
+  font-size: var(--lg-text-base);
+  line-height: var(--lg-text-base-lh);
+  font-weight: var(--lg-weight-regular);
+  letter-spacing: var(--lg-tracking-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Numbers in this product are digests, counts and elapsed clocks. They are
+     compared by eye far more often than they are read as prose, so lining
+     tabular figures are the document-wide default rather than an opt-in. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* A density context also carries its own base size, so a compact subtree shifts
+   its body text without needing a class on every descendant. */
+[data-density] {
+  font-size: var(--lg-text-base);
+  line-height: var(--lg-text-base-lh);
+}
+
+::selection {
+  background: var(--lg-selection);
+}
+
+img,
+picture,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+svg {
+  flex: none;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* -----------------------------------------------------------------------------
+   Focus. One treatment everywhere: a 2px solid accent ring, offset so it never
+   touches the control's own edge, keyboard-only via :focus-visible.
+
+   Note there is no `border-radius` in this block. The first direction had a
+   radius override here and it squared off elements that were meant to be
+   rounded; the ring simply inherits whatever shape the element already has,
+   which in this system is square for controls and pill for chips.
+   ----------------------------------------------------------------------------- */
+:focus-visible {
+  outline: var(--lg-focus-width) solid var(--lg-focus-color);
+  outline-offset: var(--lg-focus-offset);
+}
+
+/* Mouse and touch users do not get the ring, but anything that only signalled
+   state through the ring would then signal nothing. Components that need a
+   pointer affordance define their own :hover / :active. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* -----------------------------------------------------------------------------
+   Typography primitives
+   ----------------------------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-tight);
+  text-wrap: balance;
+}
+
+.lg-display {
+  font-size: var(--lg-text-800);
+  line-height: var(--lg-text-800-lh);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-display);
+}
+
+.lg-title {
+  font-size: var(--lg-text-700);
+  line-height: var(--lg-text-700-lh);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-display);
+}
+
+.lg-heading {
+  font-size: var(--lg-text-600);
+  line-height: var(--lg-text-600-lh);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-tight);
+}
+
+.lg-subheading {
+  font-size: var(--lg-text-500);
+  line-height: var(--lg-text-500-lh);
+  font-weight: var(--lg-weight-medium);
+  letter-spacing: var(--lg-tracking-tight);
+}
+
+.lg-body {
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+}
+
+/* The reading size. Only for surfaces with real sentences on them: evaluator
+   rationales and requirement descriptions. */
+.lg-prose {
+  font-size: var(--lg-text-400);
+  line-height: var(--lg-text-400-lh);
+  max-width: var(--lg-measure);
+  color: var(--lg-text-secondary);
+}
+
+.lg-prose > * + * {
+  margin-top: var(--lg-space-3);
+}
+
+.lg-prose strong {
+  color: var(--lg-text);
+  font-weight: var(--lg-weight-medium);
+}
+
+.lg-caption {
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-text-muted);
+}
+
+/* -----------------------------------------------------------------------------
+   Micro-label.
+
+   Uppercase, tracked, 11px. This is WAYFINDING ONLY — the label above a field
+   group, a column group, or a definition term. It is not a decorative eyebrow
+   above a section heading: a heading that needs a label above it to be
+   understood needs a better heading. Used at most once per surface.
+   ----------------------------------------------------------------------------- */
+.lg-micro-label {
+  display: block;
+  font-size: var(--lg-text-50);
+  line-height: var(--lg-text-50-lh);
+  font-weight: var(--lg-weight-medium);
+  letter-spacing: var(--lg-tracking-label);
+  text-transform: uppercase;
+  color: var(--lg-text-muted);
+}
+
+/* Tone helpers. Text tone only — never a background. */
+.lg-text-secondary {
+  color: var(--lg-text-secondary);
+}
+.lg-text-muted {
+  color: var(--lg-text-muted);
+}
+/* Under 3:1. Non-essential content only. */
+.lg-text-faint {
+  color: var(--lg-text-faint);
+}
+.lg-text-accent {
+  color: var(--lg-accent);
+}
+
+/* -----------------------------------------------------------------------------
+   Links. Underlined by default: in a document where a commit SHA, a file path
+   and a repository name all sit in the same sentence, colour alone is not a
+   sufficient signal for which of them is navigable.
+   ----------------------------------------------------------------------------- */
+a,
+.lg-link {
+  color: var(--lg-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: color var(--lg-dur-1) var(--lg-ease);
+}
+
+a:hover,
+.lg-link:hover {
+  color: var(--lg-accent-hover);
+  text-decoration-thickness: 2px;
+}
+
+/* -----------------------------------------------------------------------------
+   Monospace. Every identifier a person might paste into a terminal.
+   ----------------------------------------------------------------------------- */
+code,
+kbd,
+samp,
+pre,
+.lg-mono {
+  font-family: var(--lg-font-mono);
+  font-size: 0.9375em; /* Geist Mono runs large next to Geist at equal px */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "ss01" off;
+}
+
+/* -----------------------------------------------------------------------------
+   The ink rule — this direction's signature.
+
+   A full-strength rule under a page or section heading, where every other
+   division in the system is a grey hairline. It is typographic and carries no
+   state: no surface in Ledger gets a coloured edge or side tab to encode
+   status, because a 2px coloured band on the side of a card is the single most
+   recognisable machine-generated tell in this class of interface.
+   ----------------------------------------------------------------------------- */
+.lg-rule-ink {
+  border-bottom: 1px solid var(--lg-rule-ink);
+}
+
+.lg-rule {
+  border: 0;
+  border-top: 1px solid var(--lg-rule);
+}
+
+/* -----------------------------------------------------------------------------
+   Layout helpers
+   ----------------------------------------------------------------------------- */
+
+.lg-container {
+  width: 100%;
+  max-width: var(--lg-container);
+  margin-inline: auto;
+  padding-inline: var(--lg-page-pad);
+}
+
+.lg-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-4);
+}
+.lg-stack--tight {
+  gap: var(--lg-space-2);
+}
+.lg-stack--loose {
+  gap: var(--lg-space-6);
+}
+
+.lg-row-flex {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-2);
+}
+.lg-row-flex--between {
+  justify-content: space-between;
+}
+.lg-row-flex--wrap {
+  flex-wrap: wrap;
+}
+
+.lg-grid {
+  display: grid;
+  gap: var(--lg-space-4);
+}
+.lg-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.lg-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Wide content scrolls inside this; the page body never scrolls sideways.
+   `position: relative` is what makes the second half of that true. An
+   absolutely positioned descendant resolves against the nearest positioned
+   ancestor, not against the scroll box, so without this an `.lg-sr-only` label
+   in a wide table's header resolves against the page and drags the document's
+   scroll width out to wherever the scrolled-away column sits. The clipping
+   looks correct and the whole page scrolls sideways anyway. */
+.lg-scroll-x {
+  position: relative;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.lg-spacer {
+  flex: 1 1 auto;
+}
+
+/* Available to assistive technology, not to sighted users. */
+.lg-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Truncation. `min-width: 0` because a flex child will otherwise refuse to
+   shrink below its content and the ellipsis never appears. */
+.lg-truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
