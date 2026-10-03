@@ -1,1 +1,0 @@
-ALTER TABLE "project_repos" ADD COLUMN "default_branch" text NOT NULL;
