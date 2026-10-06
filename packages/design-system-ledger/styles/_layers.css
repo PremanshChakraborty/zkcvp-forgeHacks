@@ -1,0 +1,15 @@
+/* =============================================================================
+   The layer stack, without fonts. Shared by both entry points so they cannot
+   drift. Do not import this file directly — use `ledger.css` (previews, loads
+   Geist over @import) or `ledger.app.css` (the app, loads Geist via next/font).
+
+   Order matters. `tokens` defines every value, `base` sets document defaults,
+   the two component layers read tokens only, and `responsive` loads last so it
+   can override component rules without raising specificity.
+   ============================================================================= */
+
+@import "./tokens.css";
+@import "./base.css";
+@import "./components.css";
+@import "./domain.css";
+@import "./responsive.css";

@@ -1,0 +1,1406 @@
+/* =============================================================================
+   ZKCVP · Ledger — Generic components
+
+   Nothing in this file knows about requirements, verdicts, commits or evidence.
+   Domain-aware UI lives in domain.css.
+
+   Shape rule, applied without exception below: surfaces and controls are square
+   (`--lg-radius`, which is 0); only chips and avatars are round
+   (`--lg-radius-pill`). There is no third radius to get wrong.
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   BUTTON
+
+   Four tones. Exactly one of them is filled with the accent, because a surface
+   with two primary actions has no primary action.
+
+   `danger` is filled too, and deliberately so: it is only used for the
+   irreversible operations in this product (permanent repo removal), and a quiet
+   destructive button is a trap.
+   ----------------------------------------------------------------------------- */
+.lg-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lg-space-2);
+  height: var(--lg-control-md);
+  padding-inline: var(--lg-space-4);
+  border: 1px solid transparent;
+  border-radius: var(--lg-radius);
+  font-size: var(--lg-text-300);
+  line-height: 1;
+  font-weight: var(--lg-weight-medium);
+  letter-spacing: var(--lg-tracking-normal);
+  white-space: nowrap; /* a wrapped button label is a broken button */
+  text-decoration: none;
+  transition: background-color var(--lg-dur-1) var(--lg-ease),
+    border-color var(--lg-dur-1) var(--lg-ease),
+    color var(--lg-dur-1) var(--lg-ease);
+}
+
+.lg-btn:hover {
+  text-decoration: none;
+}
+
+/* Tactile press. Not a transform — a 1px shift on a square control against a
+   ruled layout reads as misalignment, so the feedback is tonal instead. */
+.lg-btn:active:not(:disabled) {
+  transition-duration: 0ms;
+}
+
+.lg-btn:disabled,
+.lg-btn[aria-disabled="true"] {
+  opacity: 0.45;
+}
+
+.lg-btn--sm {
+  height: var(--lg-control-sm);
+  padding-inline: var(--lg-space-3);
+  font-size: var(--lg-text-200);
+}
+
+.lg-btn--lg {
+  height: var(--lg-control-lg);
+  padding-inline: var(--lg-space-5);
+  font-size: var(--lg-text-400);
+}
+
+/* primary */
+.lg-btn--primary {
+  background: var(--lg-accent-solid);
+  border-color: var(--lg-accent-solid);
+  color: var(--lg-on-accent);
+}
+.lg-btn--primary:hover:not(:disabled) {
+  background: var(--lg-accent-hover);
+  border-color: var(--lg-accent-hover);
+}
+.lg-btn--primary:active:not(:disabled) {
+  background: var(--lg-accent-active);
+  border-color: var(--lg-accent-active);
+}
+
+/* secondary — the default for everything that is not the one primary action */
+.lg-btn--secondary {
+  background: var(--lg-surface);
+  border-color: var(--lg-rule-strong);
+  color: var(--lg-text);
+}
+.lg-btn--secondary:hover:not(:disabled) {
+  background: var(--lg-hover);
+  border-color: var(--lg-text-muted);
+}
+.lg-btn--secondary:active:not(:disabled) {
+  background: var(--lg-active);
+}
+
+/* quiet — toolbar and row-level actions */
+.lg-btn--quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--lg-text-secondary);
+}
+.lg-btn--quiet:hover:not(:disabled) {
+  background: var(--lg-hover);
+  color: var(--lg-text);
+}
+.lg-btn--quiet:active:not(:disabled) {
+  background: var(--lg-active);
+}
+
+/* danger */
+/* Weighty without alarm. Archive is irreversible but it is not an error, and
+   red is now spoken for by the verdict family — so the seriousness is carried
+   by the confirmation step the control puts in front of itself, and by a fill
+   that is still a fill, rather than by a hue that says something broke. */
+.lg-btn--neutral {
+  background: var(--lg-neutral-solid);
+  border-color: var(--lg-neutral-solid);
+  color: #ffffff;
+}
+.lg-btn--neutral:hover:not(:disabled) {
+  background: var(--lg-text-secondary);
+  border-color: var(--lg-text-secondary);
+}
+
+.lg-btn--danger {
+  background: var(--lg-danger-solid);
+  border-color: var(--lg-danger-solid);
+  color: var(--lg-on-danger);
+}
+.lg-btn--danger:hover:not(:disabled) {
+  background: var(--lg-danger-hover);
+  border-color: var(--lg-danger-hover);
+}
+
+/* Loading. The label stays in place and keeps its width so the button does not
+   resize mid-request; the spinner replaces the leading icon slot. */
+.lg-btn[data-loading="true"] {
+  pointer-events: none;
+}
+
+.lg-btn__icon {
+  display: inline-flex;
+  margin-inline: calc(var(--lg-space-1) * -1);
+}
+
+.lg-icon-btn {
+  width: var(--lg-control-md);
+  padding-inline: 0;
+}
+.lg-icon-btn.lg-btn--sm {
+  width: var(--lg-control-sm);
+}
+.lg-icon-btn.lg-btn--lg {
+  width: var(--lg-control-lg);
+}
+
+/* A group of buttons sharing edges. Square shape makes this trivial, which is
+   part of why the shape is square. */
+.lg-btn-group {
+  display: inline-flex;
+}
+.lg-btn-group > .lg-btn + .lg-btn {
+  margin-left: -1px;
+}
+.lg-btn-group > .lg-btn:hover,
+.lg-btn-group > .lg-btn:focus-visible {
+  z-index: 1;
+}
+
+/* -----------------------------------------------------------------------------
+   CHIP / BADGE
+
+   The only round things in the system. Status is never colour alone: every chip
+   pairs its tone with a text label, and the label is the accessible name.
+   ----------------------------------------------------------------------------- */
+.lg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lg-space-1);
+  height: 1.375rem;
+  padding-inline: var(--lg-space-2);
+  border: 1px solid var(--lg-neutral-rule);
+  border-radius: var(--lg-radius-pill);
+  background: transparent;
+  color: var(--lg-text-secondary);
+  font-size: var(--lg-text-100);
+  line-height: 1;
+  font-weight: var(--lg-weight-medium);
+  white-space: nowrap;
+}
+
+.lg-chip svg {
+  margin-left: -1px;
+}
+
+.lg-chip--neutral {
+  border-color: var(--lg-neutral-rule);
+  color: var(--lg-neutral);
+}
+
+.lg-chip--satisfied {
+  background: var(--lg-satisfied-subtle);
+  border-color: var(--lg-satisfied-rule);
+  color: var(--lg-satisfied);
+}
+
+/* Built exactly like `satisfied`: a tinted outline, not a fill. The two
+   verdicts are opposites and should read as a matched pair rather than as a
+   quiet one and a shouting one. Weight is what now separates a verdict from a
+   failure — this chip against `danger`'s bordered alert panel — which is what
+   leaves solid ink free for the primary action. */
+.lg-chip--unsatisfied {
+  background: var(--lg-unsatisfied-subtle);
+  border-color: var(--lg-unsatisfied-rule);
+  color: var(--lg-unsatisfied);
+}
+
+.lg-chip--danger {
+  background: var(--lg-danger-subtle);
+  border-color: var(--lg-danger-rule);
+  color: var(--lg-danger);
+}
+
+.lg-chip--warning {
+  background: var(--lg-warning-subtle);
+  border-color: var(--lg-warning-rule);
+  color: var(--lg-warning);
+}
+
+.lg-chip--accent {
+  background: var(--lg-accent-subtle);
+  border-color: var(--lg-accent-rule);
+  color: var(--lg-accent);
+}
+
+/* Dashed, so archived can never be mistaken for a verdict. */
+.lg-chip--archived {
+  border-style: dashed;
+  border-color: var(--lg-archived-rule);
+  color: var(--lg-archived);
+}
+
+/* Role identity. The one chip family with no hue at all — identity is never
+   coloured, so it can never be read as a conclusion. */
+.lg-chip--role {
+  gap: var(--lg-space-1);
+  border-color: var(--lg-role-rule);
+  color: var(--lg-role-text);
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  letter-spacing: var(--lg-tracking-label);
+  text-transform: uppercase;
+}
+.lg-chip--role[data-role="stakeholder"] {
+  background: var(--lg-role-fill);
+}
+
+/* A version stamp. Square, unlike every other chip, because it is an
+   identifier rather than a status — the same reasoning that puts it in mono. */
+.lg-version-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 1.25rem;
+  padding-inline: var(--lg-space-1);
+  border: 1px solid var(--lg-rule);
+  border-radius: var(--lg-radius);
+  background: var(--lg-well);
+  color: var(--lg-text-muted);
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  line-height: 1;
+}
+.lg-version-pill[data-current="true"] {
+  border-color: var(--lg-accent-rule);
+  background: var(--lg-accent-subtle);
+  color: var(--lg-accent);
+}
+
+/* Dot-only variant, for a dense table cell where a full chip will not fit. It
+   carries aria-label and title in markup, so the colour is never the only
+   carrier of meaning even here. */
+.lg-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--lg-radius-pill);
+  border: 1px solid currentColor;
+  background: currentColor;
+}
+.lg-dot--new {
+  color: var(--lg-neutral);
+  background: transparent;
+}
+.lg-dot--verified {
+  color: var(--lg-satisfied);
+}
+.lg-dot--eval-failed {
+  color: var(--lg-unsatisfied);
+}
+.lg-dot--error {
+  color: var(--lg-danger);
+}
+/* Hollow and dashed, matching the archived chip — archiving is orthogonal to
+   status, so it must not read as one of the three verdict outcomes. */
+.lg-dot--archived {
+  color: var(--lg-archived);
+  background: transparent;
+  border-style: dashed;
+}
+
+/* -----------------------------------------------------------------------------
+   CARD / PANEL / WELL
+
+   Bounded by rules, never lifted. Nothing in this system uses a shadow to say
+   "this is a group" — a 1px rule says it more precisely and survives dark mode.
+   ----------------------------------------------------------------------------- */
+.lg-card {
+  background: var(--lg-surface);
+  border: 1px solid var(--lg-rule);
+  border-radius: var(--lg-radius);
+}
+
+.lg-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-3);
+  padding: var(--lg-space-3) var(--lg-space-4);
+  border-bottom: 1px solid var(--lg-rule);
+}
+
+.lg-card__title {
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-tight);
+}
+
+.lg-card__body {
+  padding: var(--lg-space-4);
+}
+
+.lg-card__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-2);
+  padding: var(--lg-space-3) var(--lg-space-4);
+  border-top: 1px solid var(--lg-rule);
+  background: var(--lg-well);
+}
+
+/* Flush variant, for a card whose body is a full-bleed table or row list. */
+.lg-card--flush > .lg-card__body {
+  padding: 0;
+}
+
+/* The well. Cut INTO the page rather than raised above it — this is where
+   evidence, digests and raw commit data live, and the inversion is the visual
+   argument that the content was read rather than authored. */
+.lg-well {
+  background: var(--lg-well);
+  border: 1px solid var(--lg-rule);
+  border-radius: var(--lg-radius);
+  padding: var(--lg-space-3) var(--lg-space-4);
+}
+
+/* -----------------------------------------------------------------------------
+   PAGE HEADER and SECTION HEADING
+
+   `above` is a wayfinding slot: breadcrumbs, and nothing else. There is no
+   decorative eyebrow prop, because a heading that needs a small uppercase label
+   above it to be understood needs a better heading.
+   ----------------------------------------------------------------------------- */
+.lg-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-2);
+  padding-bottom: var(--lg-space-4);
+  border-bottom: 1px solid var(--lg-rule-ink);
+  margin-bottom: var(--lg-space-6);
+}
+
+/* With a section strip, the strip's own rule closes the header and the header
+   gives up its border rather than drawing a second one a line and a half above
+   it. The strip takes the ink weight the header's rule had, so the page still
+   ends its title block on the same line it always did. */
+.lg-page-header--nav {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.lg-page-header__nav {
+  margin-top: var(--lg-space-3);
+}
+
+.lg-page-header__nav .lg-tabs-bar {
+  border-bottom-color: var(--lg-rule-ink);
+}
+
+.lg-page-header__above {
+  min-height: var(--lg-text-100-lh);
+}
+
+.lg-page-header__main {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--lg-space-4);
+  flex-wrap: wrap;
+}
+
+.lg-page-header__title {
+  font-size: var(--lg-text-700);
+  line-height: var(--lg-text-700-lh);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-display);
+}
+
+/* Wraps. The number of actions on a header is decided per page and grows over
+   a product's life, so a single row that cannot wrap puts every page one button
+   away from scrolling the whole document sideways on a phone. */
+.lg-page-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lg-space-2);
+}
+
+.lg-page-header__lead {
+  font-size: var(--lg-text-400);
+  line-height: var(--lg-text-400-lh);
+  color: var(--lg-text-secondary);
+  max-width: var(--lg-measure);
+}
+
+.lg-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-4);
+}
+
+.lg-section__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lg-space-4);
+  padding-bottom: var(--lg-space-2);
+  border-bottom: 1px solid var(--lg-rule-ink);
+}
+
+.lg-section__heading h2,
+.lg-section__heading h3 {
+  font-size: var(--lg-text-500);
+  line-height: var(--lg-text-500-lh);
+  font-weight: var(--lg-weight-semibold);
+}
+
+/* -----------------------------------------------------------------------------
+   FORM
+
+   Label ABOVE the input, help text below it, error text below that. Never a
+   placeholder standing in for a label.
+   ----------------------------------------------------------------------------- */
+.lg-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-2);
+}
+
+.lg-field__label {
+  font-size: var(--lg-text-200);
+  line-height: var(--lg-text-200-lh);
+  font-weight: var(--lg-weight-medium);
+  color: var(--lg-text);
+}
+
+.lg-field__required {
+  color: var(--lg-danger);
+  margin-left: 2px;
+}
+
+.lg-field__help {
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-text-muted); /* 4.6:1 — help text is information */
+}
+
+.lg-field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lg-space-1);
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-danger);
+}
+
+.lg-input,
+.lg-textarea,
+.lg-select {
+  width: 100%;
+  min-height: var(--lg-control-md);
+  padding: var(--lg-space-2) var(--lg-space-3);
+  background: var(--lg-surface);
+  border: 1px solid var(--lg-rule-strong);
+  border-radius: var(--lg-radius);
+  color: var(--lg-text);
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+  transition: border-color var(--lg-dur-1) var(--lg-ease);
+}
+
+.lg-input:hover:not(:disabled),
+.lg-textarea:hover:not(:disabled),
+.lg-select:hover:not(:disabled) {
+  border-color: var(--lg-text-muted);
+}
+
+/* Placeholders are hints, not labels, and they still have to be readable. */
+.lg-input::placeholder,
+.lg-textarea::placeholder {
+  color: var(--lg-text-muted);
+  opacity: 1; /* Firefox lowers this by default */
+}
+
+.lg-input:disabled,
+.lg-textarea:disabled,
+.lg-select:disabled {
+  background: var(--lg-well);
+  color: var(--lg-text-faint);
+}
+
+.lg-input[aria-invalid="true"],
+.lg-textarea[aria-invalid="true"],
+.lg-select[aria-invalid="true"] {
+  border-color: var(--lg-danger);
+}
+
+.lg-input--mono {
+  font-family: var(--lg-font-mono);
+}
+
+.lg-textarea {
+  min-height: 5rem;
+  resize: vertical;
+  font-size: var(--lg-text-400);
+  line-height: var(--lg-text-400-lh);
+}
+
+.lg-select {
+  appearance: none;
+  padding-right: var(--lg-space-6);
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 1rem) 51%, calc(100% - 0.7rem) 51%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* Checkbox and radio. Native input, restyled — so keyboard behaviour, form
+   participation and the indeterminate state come for free. */
+.lg-check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lg-space-2);
+  cursor: pointer;
+}
+
+.lg-check__box {
+  flex: none;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  margin-top: 0.1875rem; /* optical alignment to the first line of the label */
+  border: 1px solid var(--lg-rule-strong);
+  border-radius: var(--lg-radius);
+  background: var(--lg-surface);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color var(--lg-dur-1) var(--lg-ease),
+    border-color var(--lg-dur-1) var(--lg-ease);
+}
+
+.lg-check__box[type="radio"] {
+  border-radius: var(--lg-radius-pill);
+}
+
+.lg-check__box:hover:not(:disabled) {
+  border-color: var(--lg-text-muted);
+}
+
+.lg-check__box:checked {
+  background-color: var(--lg-accent-solid);
+  border-color: var(--lg-accent-solid);
+  background-image: var(--lg-icon-check);
+}
+
+.lg-check__box[type="radio"]:checked {
+  background-image: none;
+  box-shadow: inset 0 0 0 3px var(--lg-surface);
+}
+
+.lg-check__box:indeterminate {
+  background-color: var(--lg-accent-solid);
+  border-color: var(--lg-accent-solid);
+  background-image: var(--lg-icon-dash);
+}
+
+.lg-check__box:disabled {
+  background-color: var(--lg-well);
+  border-color: var(--lg-rule);
+}
+
+.lg-check__label {
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+}
+
+.lg-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-3);
+  border: 0;
+  padding: 0;
+}
+
+.lg-fieldset > legend {
+  padding: 0;
+  margin-bottom: var(--lg-space-1);
+  font-size: var(--lg-text-200);
+  font-weight: var(--lg-weight-medium);
+}
+
+/* -----------------------------------------------------------------------------
+   TABLE
+
+   Ruled, not striped. Zebra rows fight with status chips for the reader's
+   attention, and in a table whose whole job is to carry status that is a bad
+   trade.
+   ----------------------------------------------------------------------------- */
+.lg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--lg-text-base);
+  line-height: var(--lg-text-base-lh);
+}
+
+.lg-table th {
+  height: var(--lg-row);
+  padding: 0 var(--lg-cell-pad-x);
+  border-bottom: 1px solid var(--lg-rule-strong);
+  text-align: left;
+  font-size: var(--lg-text-50);
+  font-weight: var(--lg-weight-medium);
+  letter-spacing: var(--lg-tracking-label);
+  text-transform: uppercase;
+  color: var(--lg-text-muted);
+  white-space: nowrap;
+}
+
+.lg-table td {
+  height: var(--lg-row);
+  padding: 0 var(--lg-cell-pad-x);
+  border-bottom: 1px solid var(--lg-rule);
+  vertical-align: middle;
+}
+
+.lg-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.lg-table tbody tr[data-interactive="true"]:hover {
+  background: var(--lg-hover);
+}
+
+.lg-table__cell--mono {
+  font-family: var(--lg-font-mono);
+  white-space: nowrap;
+}
+
+.lg-table__cell--num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* `.lg-table th` sets `text-align: left` at a higher specificity than the
+   modifier, so a numeric column's heading sat over the left edge of a column
+   whose figures were flush right. A header that does not sit over its own
+   values is not a header. */
+.lg-table th.lg-table__cell--num {
+  text-align: right;
+}
+
+.lg-table__cell--shrink {
+  width: 1%;
+  white-space: nowrap;
+}
+
+/* -----------------------------------------------------------------------------
+   DEFINITION LIST
+
+   Grid gap cannot express this: the space between a term and its value must be
+   tighter than the space between one pair and the next, and a single `gap`
+   value is by definition the same in both directions. So margins carry the
+   rhythm.
+   ----------------------------------------------------------------------------- */
+.lg-dl {
+  display: grid;
+  grid-template-columns: minmax(7rem, max-content) minmax(0, 1fr);
+  column-gap: var(--lg-space-4);
+  row-gap: var(--lg-space-2);
+  margin: 0;
+}
+
+.lg-dl dt {
+  font-size: var(--lg-text-200);
+  color: var(--lg-text-muted);
+}
+
+.lg-dl dd {
+  margin: 0;
+  font-size: var(--lg-text-300);
+}
+
+.lg-dl--stacked {
+  display: block;
+}
+.lg-dl--stacked dt {
+  margin-top: var(--lg-space-3);
+}
+.lg-dl--stacked dt:first-child {
+  margin-top: 0;
+}
+.lg-dl--stacked dd {
+  margin-top: var(--lg-space-1);
+}
+
+/* -----------------------------------------------------------------------------
+   NAVIGATION
+   ----------------------------------------------------------------------------- */
+.lg-sidenav {
+  width: var(--lg-sidenav);
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-5);
+  padding: var(--lg-space-4) var(--lg-space-3);
+  border-right: 1px solid var(--lg-rule);
+}
+
+.lg-sidenav__section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lg-sidenav__section-label {
+  padding: 0 var(--lg-space-2) var(--lg-space-2);
+  font-size: var(--lg-text-50);
+  font-weight: var(--lg-weight-medium);
+  letter-spacing: var(--lg-tracking-label);
+  text-transform: uppercase;
+  color: var(--lg-text-muted);
+}
+
+.lg-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-2);
+  min-height: var(--lg-control-md);
+  padding: 0 var(--lg-space-2);
+  border-radius: var(--lg-radius);
+  color: var(--lg-text-secondary);
+  font-size: var(--lg-text-300);
+  text-decoration: none;
+  transition: background-color var(--lg-dur-1) var(--lg-ease),
+    color var(--lg-dur-1) var(--lg-ease);
+}
+
+.lg-nav-item:hover {
+  background: var(--lg-hover);
+  color: var(--lg-text);
+  text-decoration: none;
+}
+
+/* Active state carries a left rule AND a weight change, so it is legible
+   without relying on the accent hue. */
+.lg-nav-item[aria-current] {
+  background: var(--lg-accent-subtle);
+  color: var(--lg-accent);
+  font-weight: var(--lg-weight-medium);
+  box-shadow: inset 2px 0 0 var(--lg-accent-solid);
+}
+
+.lg-nav-item__count {
+  margin-left: auto;
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-100);
+  color: var(--lg-text-muted);
+}
+
+/* Tabs. Scroll horizontally rather than wrapping — a two-line tab strip
+   reorders itself as the label set changes and destroys muscle memory. */
+.lg-tabs {
+  display: flex;
+  gap: var(--lg-space-4);
+  border-bottom: 1px solid var(--lg-rule);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.lg-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.lg-tab {
+  flex: none;
+  position: relative;
+  padding: var(--lg-space-2) 0;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  color: var(--lg-text-muted);
+  font-size: var(--lg-text-300);
+  font-weight: var(--lg-weight-medium);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color var(--lg-dur-1) var(--lg-ease),
+    border-color var(--lg-dur-1) var(--lg-ease);
+}
+
+.lg-tab:hover {
+  color: var(--lg-text);
+  text-decoration: none;
+}
+
+/* `aria-current` alongside `aria-selected`: a tab strip whose sections are
+   panels marks its choice with one, a strip whose sections are pages marks it
+   with the other, and they are the same mark to look at. */
+.lg-tab[aria-selected="true"],
+.lg-tab[aria-current] {
+  color: var(--lg-text);
+  border-bottom-color: var(--lg-rule-ink);
+}
+
+/* The strip plus whatever is pinned beside it. The rule belongs to this row
+   rather than to the scroller inside it, so the tabs' active underline still
+   overlaps a line that runs the full width even when the tabs themselves are
+   scrolled. */
+.lg-tabs-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--lg-space-4);
+  border-bottom: 1px solid var(--lg-rule);
+}
+
+.lg-tabs-bar > .lg-tabs {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-bottom: 0;
+}
+
+/* Pinned to the far end, and vertically aligned to the tabs rather than to
+   their text baseline: what goes here is a count or a progress track, not
+   another label. */
+.lg-tabs__end {
+  margin-left: auto;
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding-bottom: var(--lg-space-2);
+}
+
+.lg-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-2);
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-text-muted);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.lg-breadcrumb li {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-2);
+}
+
+.lg-breadcrumb a {
+  color: var(--lg-text-muted);
+  text-decoration: none;
+}
+.lg-breadcrumb a:hover {
+  color: var(--lg-text);
+  text-decoration: underline;
+}
+
+.lg-breadcrumb__sep {
+  color: var(--lg-text-faint);
+}
+
+.lg-breadcrumb [aria-current] {
+  color: var(--lg-text-secondary);
+}
+
+/* -----------------------------------------------------------------------------
+   FEEDBACK
+
+   Alert, spinner, indeterminate bar, skeleton, empty state, toast.
+   ----------------------------------------------------------------------------- */
+.lg-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lg-space-3);
+  padding: var(--lg-space-3) var(--lg-space-4);
+  border: 1px solid var(--lg-rule);
+  border-radius: var(--lg-radius);
+  background: var(--lg-surface);
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+}
+
+/* No coloured left border. Tone is carried by the icon, the tinted background
+   and the words — an accent band down one edge of a box is the most
+   recognisable machine-generated tell in this class of interface. */
+.lg-alert--info {
+  background: var(--lg-accent-subtle);
+  border-color: var(--lg-accent-rule);
+}
+.lg-alert--info .lg-alert__icon {
+  color: var(--lg-accent);
+}
+
+.lg-alert--success {
+  background: var(--lg-satisfied-subtle);
+  border-color: var(--lg-satisfied-rule);
+}
+.lg-alert--success .lg-alert__icon {
+  color: var(--lg-satisfied);
+}
+
+.lg-alert--warning {
+  background: var(--lg-warning-subtle);
+  border-color: var(--lg-warning-rule);
+}
+.lg-alert--warning .lg-alert__icon {
+  color: var(--lg-warning);
+}
+
+.lg-alert--danger {
+  background: var(--lg-danger-subtle);
+  border-color: var(--lg-danger-rule);
+}
+.lg-alert--danger .lg-alert__icon {
+  color: var(--lg-danger);
+}
+
+.lg-alert__icon {
+  flex: none;
+  margin-top: 1px;
+}
+
+.lg-alert__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-1);
+}
+
+.lg-alert__title {
+  font-weight: var(--lg-weight-semibold);
+}
+
+.lg-alert__actions {
+  display: flex;
+  gap: var(--lg-space-2);
+  margin-top: var(--lg-space-2);
+}
+
+/* Spinner. Slows under reduced motion rather than stopping — a frozen spinner
+   says "hung" about a request that is still running. */
+.lg-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--lg-radius-pill);
+  opacity: 0.9;
+  animation: lg-spin var(--lg-dur-indicator) linear infinite;
+}
+
+@keyframes lg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Indeterminate bar. `transform` only — animating `left` or `width` forces
+   layout on every frame. */
+.lg-progress {
+  position: relative;
+  height: 3px;
+  overflow: hidden;
+  background: var(--lg-rule);
+  border-radius: var(--lg-radius);
+}
+
+.lg-progress__bar {
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: var(--lg-accent-solid);
+  animation: lg-indeterminate calc(var(--lg-dur-indicator) * 1.6) var(--lg-ease)
+    infinite;
+  will-change: transform;
+}
+
+@keyframes lg-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+/* Skeleton. Purely decorative motion, so it stops outright under reduced
+   motion rather than slowing. */
+.lg-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--lg-well);
+  border-radius: var(--lg-radius);
+  height: var(--lg-text-300-lh);
+}
+
+.lg-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--lg-hover),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: lg-shimmer 1400ms var(--lg-ease) infinite;
+}
+
+@keyframes lg-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-skeleton::after {
+    animation: none;
+  }
+}
+
+.lg-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--lg-space-3);
+  padding: var(--lg-space-7) var(--lg-space-5);
+  border: 1px dashed var(--lg-rule-strong);
+  border-radius: var(--lg-radius);
+  background: var(--lg-surface);
+}
+
+.lg-empty__title {
+  font-size: var(--lg-text-500);
+  line-height: var(--lg-text-500-lh);
+  font-weight: var(--lg-weight-semibold);
+}
+
+.lg-empty__body {
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+  color: var(--lg-text-secondary);
+  max-width: 48ch;
+}
+
+/* Toast. One of only two things in the system allowed to cast a shadow, since
+   it genuinely floats above the document. */
+.lg-toast-region {
+  position: fixed;
+  bottom: var(--lg-space-5);
+  right: var(--lg-space-5);
+  z-index: var(--lg-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-2);
+  width: min(24rem, calc(100vw - var(--lg-space-6)));
+}
+
+.lg-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lg-space-3);
+  padding: var(--lg-space-3) var(--lg-space-4);
+  background: var(--lg-surface);
+  border: 1px solid var(--lg-rule-strong);
+  border-radius: var(--lg-radius);
+  box-shadow: var(--lg-shadow-pop);
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+}
+
+.lg-toast__body {
+  min-width: 0;
+  flex: 1;
+}
+
+/* Countdown ring for the undo window. `stroke-dashoffset` is animated, which is
+   a paint-only property on an SVG stroke, and the numeric seconds sit inside
+   it so the remaining time is legible rather than inferred. */
+.lg-countdown {
+  position: relative;
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.lg-countdown svg {
+  transform: rotate(-90deg);
+}
+
+.lg-countdown__track {
+  stroke: var(--lg-rule);
+}
+
+.lg-countdown__ring {
+  stroke: var(--lg-accent-solid);
+  transition: stroke-dashoffset 1000ms linear;
+}
+
+.lg-countdown__value {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  color: var(--lg-text-secondary);
+}
+
+/* -----------------------------------------------------------------------------
+   IDENTIFIERS
+
+   Every value a person might paste into a terminal.
+   ----------------------------------------------------------------------------- */
+.lg-ident {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--lg-space-1);
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-200);
+  white-space: nowrap;
+}
+
+.lg-ident__value {
+  color: var(--lg-text);
+}
+
+/* Boxed variant, for a SHA sitting on its own in a well. */
+.lg-ident--boxed {
+  padding: 1px var(--lg-space-1);
+  border: 1px solid var(--lg-rule);
+  border-radius: var(--lg-radius);
+  background: var(--lg-well);
+}
+
+.lg-ident__prefix {
+  color: var(--lg-text-muted);
+}
+
+.lg-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--lg-radius);
+  color: var(--lg-text-muted);
+  opacity: 0;
+  transition: opacity var(--lg-dur-1) var(--lg-ease),
+    color var(--lg-dur-1) var(--lg-ease);
+}
+
+.lg-ident:hover .lg-copy,
+.lg-copy:focus-visible {
+  opacity: 1;
+}
+
+.lg-copy:hover {
+  color: var(--lg-text);
+  background: var(--lg-hover);
+}
+
+.lg-copy[data-copied="true"] {
+  opacity: 1;
+  color: var(--lg-satisfied);
+}
+
+/* -----------------------------------------------------------------------------
+   TIMELINE
+   ----------------------------------------------------------------------------- */
+.lg-timeline {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lg-timeline__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  column-gap: var(--lg-space-3);
+  padding-bottom: var(--lg-space-4);
+}
+
+.lg-timeline__item:last-child {
+  padding-bottom: 0;
+}
+
+/* The connecting line. Drawn as a border on the marker column so it stops
+   naturally at the last item instead of needing an :after with a computed
+   height. */
+.lg-timeline__item:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: calc(0.5rem - 0.5px);
+  top: 1.125rem;
+  bottom: 0;
+  width: 1px;
+  background: var(--lg-rule);
+}
+
+.lg-timeline__marker {
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1.25rem;
+  color: var(--lg-text-muted);
+}
+
+.lg-timeline__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-1);
+}
+
+.lg-timeline__title {
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+  font-weight: var(--lg-weight-medium);
+}
+
+.lg-timeline__meta {
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-text-muted);
+}
+
+/* -----------------------------------------------------------------------------
+   DISCLOSURE
+
+   A collapsible entry, and a run of them. Native `<details>`/`<summary>`: the
+   only thing this layer adds is the chrome, because the element already owns
+   the behaviour.
+
+   The summary row is a full-height hit target rather than a caret you have to
+   aim at — the whole row is the control, which is also why the caret carries no
+   hover state of its own.
+   ----------------------------------------------------------------------------- */
+.lg-disclosure-list {
+  border: 1px solid var(--lg-rule);
+  border-radius: var(--lg-radius);
+  background: var(--lg-surface);
+}
+
+.lg-disclosure-list > .lg-disclosure {
+  border-bottom: 1px solid var(--lg-rule);
+}
+
+/* A row, so a `lead` control can sit beside the disclosure instead of inside
+   its summary. Without a lead the detail is the only child and takes the whole
+   width, which is why there is no separate one-column case to maintain. */
+.lg-disclosure {
+  display: flex;
+  align-items: flex-start;
+}
+
+.lg-disclosure__detail {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Centred on the summary's own row height, not on the whole entry: an open
+   entry is as tall as its body, and a checkbox floating halfway down a
+   paragraph has stopped pointing at the row it selects. */
+.lg-disclosure__lead {
+  display: flex;
+  align-items: center;
+  min-height: var(--lg-row);
+  padding-left: var(--lg-space-4);
+}
+
+/* The summary keeps its own left padding when it starts the row, and gives most
+   of it up when a lead has already paid for the gutter. */
+.lg-disclosure__lead + .lg-disclosure__detail .lg-disclosure__summary,
+.lg-disclosure__lead + .lg-disclosure__detail .lg-disclosure__body {
+  padding-left: var(--lg-space-3);
+}
+
+.lg-disclosure-list > .lg-disclosure:last-child {
+  border-bottom: 0;
+}
+
+.lg-disclosure__summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content max-content;
+  align-items: center;
+  column-gap: var(--lg-space-3);
+  min-height: var(--lg-row);
+  padding: var(--lg-space-2) var(--lg-space-4);
+  cursor: pointer;
+  transition: background-color var(--lg-dur-1) var(--lg-ease);
+}
+
+/* Both spellings are needed: `display` on the summary box replaces the marker
+   in Firefox and Chrome, `::-webkit-details-marker` catches older Safari. */
+.lg-disclosure__summary::marker,
+.lg-disclosure__summary::-webkit-details-marker {
+  display: none;
+  content: "";
+}
+
+.lg-disclosure__summary:hover {
+  background: var(--lg-hover);
+}
+
+/* The ring is drawn inside the row rather than around it: the summary is a
+   flush-edged band inside a bordered list, and a 2px ring offset outward would
+   be clipped on the left and right by the list's own border. */
+.lg-disclosure__summary:focus-visible {
+  outline: var(--lg-focus-width) solid var(--lg-focus-color);
+  outline-offset: calc(-1 * var(--lg-focus-width));
+}
+
+.lg-disclosure__main {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-2);
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+  font-weight: var(--lg-weight-medium);
+  color: var(--lg-text);
+}
+
+.lg-disclosure__meta {
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.lg-disclosure__caret {
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  color: var(--lg-text-muted);
+  transition: transform var(--lg-dur-2) var(--lg-ease);
+}
+
+.lg-disclosure__detail[open] > .lg-disclosure__summary .lg-disclosure__caret {
+  transform: rotate(90deg);
+}
+
+/* Flush with the summary's leading edge rather than indented under its text.
+   An indent would have to pick a hanging measure and then hold it against a
+   version pill, a chip and a wrapped title, none of which have a fixed width;
+   the open state is already unambiguous from the caret and the ground. The
+   bottom padding is larger than the top: the gap to the next summary row has to
+   beat the gap between this body and the row it belongs to, or an open entry
+   looks like it opened the entry below it. */
+.lg-disclosure__body {
+  padding: var(--lg-space-2) var(--lg-space-4) var(--lg-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-4);
+}

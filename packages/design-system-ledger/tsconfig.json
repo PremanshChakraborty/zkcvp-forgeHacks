@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  /*
+   * `components` first: it is the deliverable. `gallery` and `preview-app` are
+   * harnesses that prove it renders, and are typechecked in the same pass so a
+   * broken specimen cannot land alongside a working component.
+   */
+  "include": ["components", "gallery", "preview-app/src", "checks"]
+}
