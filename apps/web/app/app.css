@@ -1,0 +1,307 @@
+/* apps/web/app/app.css
+ *
+ * App-level layout only. Nothing here restyles a Ledger component — if a
+ * component needs a change it belongs in the design system with a render-check
+ * assertion, not overridden from the app.
+ *
+ * Loaded AFTER ledger.app.css in layout.tsx, which is what lets --narrow win
+ * over .lg-container's max-width (both are single-class selectors).
+ */
+
+/* `.lg-container` is deliberately horizontal-only — max-width plus
+ * padding-inline, no vertical rhythm. The design system's own preview harness
+ * pairs it with vertical padding the same way (previews/preview.css). Without
+ * this, page content sits flush against the top of the viewport. */
+.app-page {
+  padding-block: var(--lg-space-7) var(--lg-space-8);
+}
+
+/* Auth screens are one short column. At the default 1200px an email field
+ * stretches the full width of the window, which reads as a mistake and makes
+ * the input's left and right ends land in different parts of the screen.
+ *
+ * Two classes deliberately: this competes with `.lg-container`'s own
+ * max-width, and relying on stylesheet order to break the tie is fragile —
+ * the bundler decides that, not the import statement. Verified: with a
+ * single-class selector the container's 1200px won. */
+.app-page.app-page--narrow {
+  max-width: 34rem;
+}
+
+/* -----------------------------------------------------------------------------
+   App header
+
+   Layout only. Every visible part is a Ledger component or token — the mark is
+   the sole exception, and it is type and colour rather than a new component.
+   ----------------------------------------------------------------------------- */
+
+/* Sticky, and the only thing in this app that is. Which of two live sessions is
+   answering for the page changes what every screen renders, so it is the one
+   fact that must not scroll away. Opaque ground, because a translucent bar over
+   a table of commit SHAs is decoration bought with legibility. */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--lg-rule);
+  background: var(--lg-surface);
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lg-space-4);
+  min-height: 3.5rem;
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-3);
+  min-width: 0;
+}
+
+/* Tracked, which is the whole difference between a wordmark and a bold word.
+   Mono because every identifier this product shows is mono, and the product's
+   own name is the first of them. */
+.app-header__mark {
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-300);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: 0.1em;
+  color: var(--lg-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-header__mark:hover {
+  color: var(--lg-text-secondary);
+  text-decoration: none;
+}
+
+/* A hairline between the mark and what follows it, so the left of the bar reads
+   as two fields rather than two words.
+
+   An explicit height, not `align-self: stretch` with vertical margins: the
+   brand row is only as tall as its own text, so 12px of margin at each end of a
+   20px row collapsed the rule to nothing and it rendered invisibly. */
+.app-header__rule {
+  flex: none;
+  width: 1px;
+  height: 1.125rem;
+  background: var(--lg-rule-strong);
+}
+
+.app-header__home {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lg-space-1);
+  font-size: var(--lg-text-300);
+  color: var(--lg-text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-header__home:hover {
+  color: var(--lg-text);
+  text-decoration: none;
+}
+
+.app-header__viewer {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-3);
+  /* min-width:0 so the truncating label below can actually shrink; a flex item
+     defaults to min-width:auto and refuses to go under its content width. */
+  min-width: 0;
+}
+
+/* No box. A well around the role chip put a pill inside a rectangle inside a
+   bar, and three nested containers for two words is the kind of structure that
+   reads as packaging rather than as grouping. What the pair actually needed was
+   separation from the control beside it, which is one hairline's work. */
+.app-header__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-2);
+  min-width: 0;
+}
+
+/* The identity, not a heading. It yields the bar's width to the role chip and
+   the sign-out control, both of which are fixed-size and both of which the
+   visitor needs whole. */
+.app-header__label {
+  max-width: 18rem;
+  font-size: var(--lg-text-200);
+  line-height: var(--lg-text-200-lh);
+  color: var(--lg-text-secondary);
+}
+
+/* Below the design system's own small breakpoint the email is the first thing
+   to go: the role chip already says which account kind is signed in, which is
+   the part that changes what every page renders. The global link goes with it,
+   since the mark beside it already leads to the same place. */
+@media (max-width: 40rem) {
+  .app-header__label,
+  .app-header__rule,
+  .app-header__home {
+    display: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Short-value field
+
+   A GitHub username is at most 39 characters. Left to fill a 1200px container
+   it reads as a mistake for exactly the reason `.app-page--narrow` exists — but
+   these pages are full-width for their tables, so the constraint belongs on the
+   field rather than on the page.
+   ----------------------------------------------------------------------------- */
+.app-field-short {
+  max-width: 24rem;
+}
+
+/* -----------------------------------------------------------------------------
+   Claim composer: repeated repo/branch/commit rows
+
+   A rule between entries is the only thing separating "repository 2's branch
+   field" from "repository 1's commit list" once more than one repo is claimed
+   against — without it the picker reads as one long undifferentiated column.
+   ----------------------------------------------------------------------------- */
+.app-claim-repo-entry + .app-claim-repo-entry {
+  padding-top: var(--lg-space-4);
+  border-top: 1px solid var(--lg-rule);
+}
+
+/* CommitList has no built-in height limit — up to 50 rows from
+   listRepoCommits would otherwise push the branch and repo pickers below the
+   fold. Scoped to this scroll wrapper, never to .lg-commit-list itself. */
+.app-claim-commit-scroll {
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+/* -----------------------------------------------------------------------------
+   Requirement page head
+
+   The requirement's own text beside the verdict the Evaluator last returned.
+   Asymmetric on purpose: the left column holds a paragraph and the right holds
+   one conclusion and three short facts, so an even split would starve the prose
+   and leave the verdict floating in half a page of white.
+
+   `align-items: start` keeps the well its own height. Stretching it to match a
+   long description would pad it with empty ground that reads as missing
+   content, which on this particular surface would be the wrong thing to
+   suggest.
+   ----------------------------------------------------------------------------- */
+.app-req-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+  gap: var(--lg-space-5);
+  align-items: start;
+}
+
+/* The text column takes no top padding of its own. It used to carry the
+   panel's, so the two micro-labels would sit on one line, which bought an
+   alignment nobody reads across a 24px gutter at the cost of pushing the
+   requirement a full pad below the header rule. Flush to the rule is the
+   better trade: the panel's label sits a little lower because the panel is a
+   box and boxes have insides. */
+
+/* A version with no verdict yet. Dashed and untinted, deliberately: the panel
+   opposite is bordered in the verdict's own hue, and an outcome-coloured edge
+   around "there is no outcome" is the one thing this surface must never imply.
+   Dashed is the same signal `.lg-empty` uses, and the same reason the archived
+   chip is dashed. */
+.app-req-noverdict {
+  border: 1px dashed var(--lg-rule-strong);
+  border-radius: var(--lg-radius);
+  padding: var(--lg-space-4);
+}
+
+/* Stacked well before the design system's own 640px breakpoint. At ~700px the
+   fixed 22rem well leaves the description about 330px, which is half the
+   reading measure and sets the requirement text narrower than the verdict
+   beside it. */
+@media (max-width: 860px) {
+  .app-req-head {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lg-space-5);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Count columns
+
+   Three measured columns on the claims table, banded from the header to the
+   last row so each reads as one quantity down the page.
+
+   The tint is on the column, never on a chip inside a cell. A verdict belongs
+   to a requirement version and never to a claim, and a green pill sitting in a
+   claim's row says exactly the thing this product must not say. A band behind
+   a number says only "these are the satisfied ones", which is true of the
+   column and commits nothing about the row.
+
+   Subtle fills at the same low alpha the chips use, and square: the band is
+   part of the table grid, and rounding it would turn a column into four
+   floating tablets.
+   ----------------------------------------------------------------------------- */
+/* Scoped under `.lg-table` for specificity, not for reach: `.lg-table td` sets
+   cell padding as a shorthand at (0,1,1), so a bare `.app-count` at (0,1,0)
+   loses the padding it asks for no matter which stylesheet lands last. */
+.lg-table .app-count {
+  padding-inline: var(--lg-space-4);
+}
+
+.lg-table .app-count--satisfied {
+  background: var(--lg-satisfied-subtle);
+}
+
+.lg-table .app-count--unsatisfied {
+  background: var(--lg-unsatisfied-subtle);
+}
+
+/* Neutral, not a third verdict hue. Total counts the requirements the claim
+   pinned, which is a fact about the claim rather than an outcome. */
+.lg-table .app-count--total {
+  background: var(--lg-neutral-subtle);
+}
+
+/* -----------------------------------------------------------------------------
+   Claims table: the row link and the attention column
+   ----------------------------------------------------------------------------- */
+
+/* The row's real link, wearing the row's ink. The accent is for links inside
+   running text, where colour is the only thing marking them out; here the whole
+   row is the target, and a single blue date would point at the wrong one. It
+   still underlines on hover and keeps the focus ring, so it is findable as a
+   link by anyone looking for one. */
+.app-claim-row__link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-claim-row__link:hover {
+  text-decoration: underline;
+}
+
+/* One glyph wide. Centred rather than flush, because the column has no text to
+   align to and the mark reads as a marker in a margin rather than a value. */
+.lg-table .app-claim-flag-cell {
+  text-align: center;
+  padding-inline: var(--lg-space-2);
+}
+
+/* A block-level flex box, not `inline-flex`. Inline, the glyph sits on the
+   cell's text baseline and every row whose height differs puts it at a
+   different offset, so a column of marks came out visibly ragged. As a block
+   that fills the cell it centres against the row itself, and `line-height: 0`
+   keeps a stray strut from nudging it back down. */
+.app-claim-flag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  color: var(--lg-warning);
+}
