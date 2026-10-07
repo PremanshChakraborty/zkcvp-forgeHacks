@@ -1,0 +1,17 @@
+/* =============================================================================
+   ZKCVP · Ledger — single entry point.
+
+   Import this one file and nothing else:
+
+     import "@/design-system-ledger/styles/ledger.css";
+
+   Order matters. `tokens` defines every value, `base` sets document defaults,
+   the two component layers read tokens only, and `responsive` loads last so it
+   can override component rules without raising specificity.
+
+   In the Next.js app, drop the `fonts` import and load Geist through next/font
+   instead — see "Fonts" in ../README.md.
+   ============================================================================= */
+
+@import "./fonts.css";
+@import "./_layers.css";

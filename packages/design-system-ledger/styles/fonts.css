@@ -1,0 +1,17 @@
+/* =============================================================================
+   ZKCVP · Ledger — Fonts
+
+   Geist Sans and Geist Mono.
+
+   This file exists so the static preview pages in `previews/` can render the
+   real typeface with no build step. In the Next.js app it should be REPLACED,
+   not imported — `@import` from a stylesheet blocks render and cannot be
+   preloaded, which costs LCP. See "Fonts" in ../README.md for the two supported
+   swaps (next/font, or self-hosted @font-face).
+
+   The fallback stacks in tokens.css are real fallbacks, not decoration: if this
+   import is removed and nothing replaces it, the system renders in system-ui
+   and ui-monospace at the same sizes and still looks deliberate.
+   ============================================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap");

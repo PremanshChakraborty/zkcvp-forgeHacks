@@ -1,0 +1,42 @@
+{
+  "name": "@zkcvp/design-system-ledger",
+  "private": true,
+  "version": "0.1.0",
+  "exports": {
+    "./components": "./components/index.ts",
+    "./gallery": "./gallery/Gallery.tsx",
+    "./gallery/*": "./gallery/*",
+    "./styles/*": "./styles/*"
+  },
+  "type": "module",
+  "description": "ZKCVP Ledger design system: tokens, plain-CSS component layer, React components, and a runnable gallery.",
+  "scripts": {
+    "dev": "vite",
+    "gallery": "vite",
+    "typecheck": "tsc --noEmit",
+    "check": "vite build --ssr ../checks/render-check.tsx --outDir ../.check --logLevel error && node .check/render-check.js",
+    "verify": "npm run typecheck && npm run check",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "//peer": [
+    "react, react-dom and @phosphor-icons/react are what the COMPONENT layer",
+    "needs. They are listed as dependencies rather than peerDependencies only",
+    "because this package is private and never published: the consuming app is",
+    "the same repo. The CSS layer under styles/ has no dependency at all.",
+    "vite, typescript and @vitejs/plugin-react are the gallery harness only."
+  ],
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0"
+  }
+}

@@ -1,0 +1,319 @@
+/* =============================================================================
+   Preview harness chrome for the Ledger specimen pages.
+
+   Everything here is prefixed `pv-` and is NOT part of the design system.
+   Nothing in this file should be copied into the app. The specimens themselves
+   use only `lg-` classes, against the real stylesheet.
+   ============================================================================= */
+
+.pv-page {
+  max-width: var(--lg-container);
+  margin-inline: auto;
+  padding: var(--lg-space-6) var(--lg-page-pad) var(--lg-space-8);
+}
+
+.pv-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--lg-space-5);
+  flex-wrap: wrap;
+  padding-bottom: var(--lg-space-4);
+  border-bottom: 1px solid var(--lg-rule-ink);
+  margin-bottom: var(--lg-space-6);
+}
+
+.pv-head__title {
+  font-size: var(--lg-text-700);
+  line-height: var(--lg-text-700-lh);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-display);
+}
+
+.pv-head__sub {
+  margin-top: var(--lg-space-2);
+  font-size: var(--lg-text-400);
+  line-height: var(--lg-text-400-lh);
+  color: var(--lg-text-secondary);
+  max-width: 70ch;
+}
+
+/* Theme and density switchers. Square, shared-edge, matching .lg-btn-group. */
+.pv-controls {
+  display: flex;
+  gap: var(--lg-space-4);
+  flex-wrap: wrap;
+}
+
+.pv-switch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-1);
+}
+
+.pv-switch__label {
+  font-size: var(--lg-text-50);
+  font-weight: var(--lg-weight-medium);
+  letter-spacing: var(--lg-tracking-label);
+  text-transform: uppercase;
+  color: var(--lg-text-muted);
+}
+
+.pv-switch__row {
+  display: flex;
+}
+
+.pv-switch button {
+  height: var(--lg-control-sm);
+  padding-inline: var(--lg-space-3);
+  border: 1px solid var(--lg-rule-strong);
+  background: var(--lg-surface);
+  color: var(--lg-text-secondary);
+  font-size: var(--lg-text-200);
+  font-weight: var(--lg-weight-medium);
+  white-space: nowrap;
+}
+
+.pv-switch button + button {
+  margin-left: -1px;
+}
+
+.pv-switch button:hover {
+  background: var(--lg-hover);
+  color: var(--lg-text);
+}
+
+.pv-switch button[aria-pressed="true"] {
+  background: var(--lg-accent-solid);
+  border-color: var(--lg-accent-solid);
+  color: var(--lg-on-accent);
+  position: relative;
+  z-index: 1;
+}
+
+/* Page navigation */
+.pv-nav {
+  display: flex;
+  gap: var(--lg-space-4);
+  flex-wrap: wrap;
+  padding-bottom: var(--lg-space-3);
+  border-bottom: 1px solid var(--lg-rule);
+  margin-bottom: var(--lg-space-6);
+}
+
+.pv-nav a {
+  color: var(--lg-text-muted);
+  font-size: var(--lg-text-300);
+  font-weight: var(--lg-weight-medium);
+  text-decoration: none;
+}
+
+.pv-nav a:hover {
+  color: var(--lg-text);
+  text-decoration: underline;
+}
+
+.pv-nav a[aria-current] {
+  color: var(--lg-text);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Section */
+.pv-section {
+  margin-bottom: var(--lg-space-7);
+}
+
+.pv-section__title {
+  font-size: var(--lg-text-600);
+  line-height: var(--lg-text-600-lh);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-tight);
+  padding-bottom: var(--lg-space-2);
+  border-bottom: 1px solid var(--lg-rule-ink);
+  margin-bottom: var(--lg-space-5);
+}
+
+/* A labelled specimen. The label is metadata about the specimen, not part of
+   it, so it sits outside the frame in mono at the smallest size. */
+.pv-spec {
+  padding-block: var(--lg-space-5);
+  border-top: 1px solid var(--lg-rule);
+}
+
+.pv-spec:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.pv-spec__label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lg-space-2);
+  flex-wrap: wrap;
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-100);
+  color: var(--lg-text-muted);
+  margin-bottom: var(--lg-space-2);
+}
+
+.pv-spec__label b {
+  font-weight: var(--lg-weight-medium);
+  color: var(--lg-text);
+}
+
+.pv-spec__note {
+  font-size: var(--lg-text-200);
+  line-height: var(--lg-text-200-lh);
+  color: var(--lg-text-muted);
+  max-width: 74ch;
+  margin-bottom: var(--lg-space-4);
+}
+
+.pv-stage {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-3);
+  flex-wrap: wrap;
+}
+
+.pv-stage--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--lg-space-4);
+}
+
+.pv-stage--block {
+  display: block;
+}
+
+/* Card grid for the index page */
+.pv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--lg-space-4);
+}
+
+.pv-card {
+  display: block;
+  padding: var(--lg-space-4);
+  background: var(--lg-surface);
+  border: 1px solid var(--lg-rule);
+  color: inherit;
+  text-decoration: none;
+}
+
+.pv-card:hover {
+  border-color: var(--lg-text-muted);
+  text-decoration: none;
+}
+
+.pv-card__title {
+  font-size: var(--lg-text-400);
+  font-weight: var(--lg-weight-semibold);
+  margin-bottom: var(--lg-space-1);
+}
+
+.pv-card__body {
+  font-size: var(--lg-text-200);
+  line-height: var(--lg-text-200-lh);
+  color: var(--lg-text-muted);
+}
+
+/* Colour and scale specimens */
+.pv-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--lg-space-3);
+}
+
+.pv-swatch__chip {
+  height: 3rem;
+  border: 1px solid var(--lg-rule);
+  margin-bottom: var(--lg-space-2);
+}
+
+.pv-swatch__name {
+  display: block;
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  color: var(--lg-text-secondary);
+  word-break: break-all;
+}
+
+.pv-swatch__role {
+  display: block;
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-text-muted);
+  margin-top: 2px;
+}
+
+.pv-typerow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lg-space-4);
+  padding-block: var(--lg-space-2);
+  border-bottom: 1px solid var(--lg-rule);
+}
+
+.pv-typerow:last-child {
+  border-bottom: 0;
+}
+
+.pv-typerow__meta {
+  flex: none;
+  width: 8rem;
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  color: var(--lg-text-muted);
+}
+
+.pv-typerow__sample {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pv-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lg-space-4);
+}
+
+.pv-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--lg-space-3);
+  flex-wrap: wrap;
+}
+
+.pv-bars__bar {
+  display: block;
+  height: 1.5rem;
+  background: var(--lg-accent-subtle);
+  border: 1px solid var(--lg-accent-rule);
+}
+
+.pv-bars__name {
+  display: block;
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  color: var(--lg-text-muted);
+  margin-top: var(--lg-space-1);
+}
+
+@media (max-width: 640px) {
+  .pv-pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pv-typerow {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pv-typerow__meta {
+    width: auto;
+  }
+}

@@ -1,0 +1,547 @@
+<!-- @dsCard group="Ledger / Domain" -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZKCVP Ledger · Domain</title>
+    <link rel="stylesheet" href="../styles/ledger.css" />
+    <link rel="stylesheet" href="./preview.css" />
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  </head>
+  <body>
+    <div class="pv-page">
+      <header class="pv-head">
+        <div>
+          <div class="pv-head__title">Domain</div>
+          <p class="pv-head__sub">
+            The components that know what a requirement, a verdict, an evidence bundle and a
+            log entry are. Every rule on this page exists because the alternative would show a
+            user something false, and every one of them is carried over from the first
+            direction unchanged.
+          </p>
+        </div>
+        <div class="pv-controls">
+          <div class="pv-switch">
+            <span class="pv-switch__label">Theme</span>
+            <div class="pv-switch__row">
+              <button type="button" data-mode="system">OS</button>
+              <button type="button" data-mode="light">Light</button>
+              <button type="button" data-mode="dark">Dark</button>
+            </div>
+          </div>
+          <div class="pv-switch">
+            <span class="pv-switch__label">Density</span>
+            <div class="pv-switch__row">
+              <button type="button" data-density-mode="comfortable">Comfortable</button>
+              <button type="button" data-density-mode="compact">Compact</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="pv-nav" aria-label="Specimen pages">
+        <a href="./index.html">Overview</a>
+        <a href="./foundations.html">Foundations</a>
+        <a href="./components.html">Components</a>
+        <a href="./domain.html" aria-current="page">Domain</a>
+      </nav>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">The requirement checklist</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Rows and progress</b><span>.lg-req-row · .lg-checklist-progress</span>
+          </div>
+          <p class="pv-spec__note">
+            The status a row shows is its current version's status, resolved through
+            requirements.current_version_id at read time. Storing effective status on the
+            requirement is forbidden, so the component takes it as a prop and assumes a join
+            produced it. Progress is drawn as one segment per requirement rather than a filled
+            bar: a bar implies a single ordered quantity, and a checklist is a set of
+            independent outcomes, so three coming back negative is not "60% done".
+          </p>
+
+          <div style="margin-bottom: var(--lg-space-4)">
+            <div class="lg-checklist-progress">
+              <span class="lg-checklist-progress__count">5 of 7 verified</span>
+              <span class="lg-checklist-progress__track" aria-hidden="true">
+                <span class="lg-checklist-progress__seg" data-status="verified"></span>
+                <span class="lg-checklist-progress__seg" data-status="verified"></span>
+                <span class="lg-checklist-progress__seg" data-status="eval_failed"></span>
+                <span class="lg-checklist-progress__seg" data-status="verified"></span>
+                <span class="lg-checklist-progress__seg" data-status="new"></span>
+                <span class="lg-checklist-progress__seg" data-status="verified"></span>
+                <span class="lg-checklist-progress__seg" data-status="verified"></span>
+                <span class="lg-checklist-progress__seg" data-status="archived"></span>
+              </span>
+            </div>
+          </div>
+
+          <ul class="lg-req-list" aria-label="Requirements">
+            <li class="lg-req-row">
+              <div class="lg-req-row__main">
+                <span class="lg-req-row__title">Rate limiting on the public API</span>
+                <span class="lg-req-row__description"
+                  >Requests are limited per token, and exceeding the limit returns 429 with a
+                  Retry-After header.</span
+                >
+              </div>
+              <div class="lg-req-row__meta">
+                <span class="lg-version-pill" data-current="true">v4</span>
+                <span class="lg-chip lg-chip--satisfied"
+                  ><i class="ph-bold ph-check-circle"></i>Verified</span
+                >
+              </div>
+              <span></span>
+            </li>
+            <li class="lg-req-row">
+              <div class="lg-req-row__main">
+                <span class="lg-req-row__title">Audit log retains 90 days</span>
+                <span class="lg-req-row__description"
+                  >Every privileged action is written to an append-only log that is retained for
+                  at least 90 days.</span
+                >
+              </div>
+              <div class="lg-req-row__meta">
+                <span class="lg-version-pill" data-current="true">v2</span>
+                <span class="lg-chip lg-chip--unsatisfied"
+                  ><i class="ph-bold ph-prohibit"></i>Not satisfied</span
+                >
+              </div>
+              <span></span>
+            </li>
+            <li class="lg-req-row">
+              <div class="lg-req-row__main">
+                <span class="lg-req-row__title">Session tokens rotate on privilege change</span>
+              </div>
+              <div class="lg-req-row__meta">
+                <span class="lg-version-pill" data-current="true">v1</span>
+                <span class="lg-chip lg-chip--neutral"
+                  ><i class="ph-bold ph-circle"></i>Not evaluated</span
+                >
+              </div>
+              <span></span>
+            </li>
+            <li class="lg-req-row" data-archived="true">
+              <div class="lg-req-row__main">
+                <span class="lg-req-row__title">Webhook payloads are signed</span>
+                <span class="lg-req-row__description">Retired in favour of the polling endpoint.</span>
+              </div>
+              <div class="lg-req-row__meta">
+                <span class="lg-version-pill">v3</span>
+                <span class="lg-chip lg-chip--archived"
+                  ><i class="ph-bold ph-archive"></i>Archived</span
+                >
+              </div>
+              <span></span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Archiving is orthogonal to status</b><span>[data-archived]</span>
+          </div>
+          <p class="pv-spec__note">
+            Look at the last row above. Its title dims, but nothing is struck through and no
+            history is hidden. A requirement can be archived whatever its verification history,
+            and archiving says nothing about whether it was ever verified, so suppressing that
+            history would be a lie of omission. The archived chip is dashed rather than tinted,
+            so it can never be read as a fourth verdict.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Verdicts</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>A negative verdict is not an error</b><span>.lg-verdict-card</span>
+          </div>
+          <p class="pv-spec__note">
+            The single most important rendering decision in this system.
+            requirement_versions.status stores a negative verdict as eval_failed, a column name
+            that reads like a malfunction and is not one: per the transition table, the
+            Evaluator returning "not satisfied" is what writes it. So it renders as "Not
+            satisfied" in solid ink, never in red, and the raw enum name never reaches a
+            screen. Red is reserved for the run not finishing at all, which says nothing about
+            the code. Note also that both cards carry a tinted hairline and nothing more: no
+            surface here gets a coloured side tab.
+          </p>
+          <div class="pv-pair">
+            <article class="lg-verdict-card" data-verdict="satisfied">
+              <header class="lg-verdict-card__header">
+                <h3 class="lg-verdict-card__title">Rate limiting on the public API</h3>
+                <span class="lg-chip lg-chip--satisfied"
+                  ><i class="ph-bold ph-check-circle"></i>Satisfied</span
+                >
+              </header>
+              <div class="lg-verdict-card__rationale">
+                <p>
+                  A token bucket limiter is applied to every route under the public router,
+                  configured per API token rather than per IP. The handler returns 429 and sets
+                  Retry-After from the bucket's refill interval.
+                </p>
+                <p>
+                  Tests cover the exhausted-bucket path and assert the header is present on the
+                  rejection.
+                </p>
+              </div>
+              <footer class="lg-verdict-card__footer">
+                <span class="lg-ident"
+                  ><i class="ph-bold ph-file-code"></i
+                  ><span class="lg-ident__value"
+                    >src/http/limiter.ts<span class="lg-ident__prefix">:34-91</span></span
+                  ></span
+                >
+                <span class="lg-ident"
+                  ><i class="ph-bold ph-git-commit"></i
+                  ><span class="lg-ident__value">4f2c9ab</span></span
+                >
+              </footer>
+            </article>
+
+            <article class="lg-verdict-card" data-verdict="not_satisfied">
+              <header class="lg-verdict-card__header">
+                <h3 class="lg-verdict-card__title">Audit log retains 90 days</h3>
+                <span class="lg-chip lg-chip--unsatisfied"
+                  ><i class="ph-bold ph-prohibit"></i>Not satisfied</span
+                >
+              </header>
+              <div class="lg-verdict-card__rationale">
+                <p>
+                  Privileged actions are written to an append-only table, so the write path
+                  satisfies the first half of the requirement.
+                </p>
+                <p>
+                  No retention policy was found. The migration that creates the table sets no
+                  TTL, and there is no scheduled job that prunes or archives older rows, so a 90
+                  day floor is not established anywhere in the code that was read.
+                </p>
+              </div>
+              <footer class="lg-verdict-card__footer">
+                <span class="lg-ident"
+                  ><i class="ph-bold ph-file-code"></i
+                  ><span class="lg-ident__value">migrations/0014_audit_log.sql</span></span
+                >
+                <span class="lg-ident"
+                  ><i class="ph-bold ph-git-commit"></i
+                  ><span class="lg-ident__value">4f2c9ab</span></span
+                >
+              </footer>
+            </article>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Verdict statement</b><span>.lg-verdict-statement</span>
+          </div>
+          <p class="pv-spec__note">
+            The headline verdict on a stakeholder's report view, and the reason this direction
+            carries a display type size at all. The negative one is set in plain ink rather
+            than tinted: it does not need a hue to be emphatic, and giving it one would put it
+            next to the red this system reserves for things that actually broke.
+          </p>
+          <div class="pv-pair">
+            <div class="lg-verdict-statement" data-verdict="satisfied">
+              <span class="lg-micro-label">Evaluator verdict</span>
+              <strong class="lg-verdict-statement__value">Satisfied</strong>
+              <span class="lg-caption"
+                >Across 4 pinned requirements, read at the commits named below.</span
+              >
+            </div>
+            <div class="lg-verdict-statement" data-verdict="not_satisfied">
+              <span class="lg-micro-label">Evaluator verdict</span>
+              <strong class="lg-verdict-statement__value">Not satisfied</strong>
+              <span class="lg-caption"
+                >Across 1 pinned requirement, read at the commits named below.</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Rationales are prose, never code</b><span>.lg-verdict-card__rationale</span>
+          </div>
+          <p class="pv-spec__note">
+            The Evaluator is constrained at generation time never to emit verbatim source; it
+            may cite a path or a line range, which is what the file reference below is for. The
+            rationale is therefore styled as prose at a 66-character measure, so a leak would
+            render as visibly wrong. That is a weak but free signal and not a filter, because
+            filtering code out of already-generated text is unreliable, which is why the
+            constraint lives in the agent's output step instead.
+          </p>
+          <div class="pv-stage">
+            <span class="lg-ident"
+              ><i class="ph-bold ph-file-code"></i
+              ><span class="lg-ident__value"
+                >src/evaluator/graph.ts<span class="lg-ident__prefix">:118-146</span></span
+              ></span
+            >
+            <span class="lg-ident"
+              ><i class="ph-bold ph-file-code"></i
+              ><span class="lg-ident__value"
+                >src/audit/write.ts<span class="lg-ident__prefix">:8</span></span
+              ></span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Evidence and the log</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Sealed is not unverifiable</b><span>.lg-evidence</span></div>
+          <p class="pv-spec__note">
+            Two things land at once here. The bundle's contents are not viewable, because it
+            holds real source from a private repo and no disclosure mechanism exists in this
+            phase. Its digest is still independently checkable, because verifying that evidence
+            was never altered and disclosing what it says are separate operations, and the
+            first never requires the second. So the verify action stays live, as a real
+            secondary button rather than a greyed-out hint. Removing it because the bundle is
+            private would collapse the distinction the whole trust model rests on.
+          </p>
+          <div class="lg-evidence">
+            <span class="lg-evidence__icon"><i class="ph-bold ph-lock-key"></i></span>
+            <span class="lg-evidence__body">
+              <span class="lg-evidence__label">
+                Evidence bundle sealed
+                <span class="lg-ident" title="sha256:9f3ac1d2b47e8850cc61a0f5e2d93b74be2049aa"
+                  ><span class="lg-ident__prefix">sha256:</span
+                  ><span class="lg-ident__value">9f3ac1…7be204</span></span
+                >
+              </span>
+              <span class="lg-evidence__note"
+                >Contents are not disclosed in this phase. The digest can still be checked
+                against the log without revealing them.</span
+              >
+            </span>
+            <span class="lg-evidence__actions">
+              <button class="lg-btn lg-btn--secondary lg-btn--sm" type="button">Verify digest</button>
+            </span>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>An intact record is not a correct judgment</b><span>.lg-logref</span>
+          </div>
+          <p class="pv-spec__note">
+            The most dangerous surface in the product to get wrong. An inclusion proof shows the
+            record was not quietly altered after it was written, and says nothing about whether
+            the Evaluator reached the right conclusion. Two things enforce that: the caveat is
+            not an optional prop, it comes from a map keyed by state so no call site can drop
+            it, and a valid proof renders in plain ink rather than the satisfied green, because
+            reusing the verdict colour would fuse the two claims.
+          </p>
+          <div class="pv-stage--stack">
+            <div class="lg-logref" data-state="verified">
+              <div class="lg-logref__head">
+                <span class="lg-logref__state"
+                  ><i class="ph-bold ph-seal-check"></i>Inclusion proof valid</span
+                >
+                <span class="lg-ident" title="sha256:c17b40e9a5d3f28016e7ba94c2d508371fe6ab09"
+                  ><span class="lg-ident__prefix">sha256:</span
+                  ><span class="lg-ident__value">c17b40…9d14c73</span></span
+                >
+                <span class="lg-spacer"></span>
+                <button class="lg-btn lg-btn--quiet lg-btn--sm" type="button">Re-check</button>
+              </div>
+              <p class="lg-logref__caveat">
+                This confirms the record was not altered after it was written. It does not
+                confirm the evaluation reached the right conclusion.
+              </p>
+            </div>
+
+            <div class="lg-logref" data-state="unavailable">
+              <div class="lg-logref__head">
+                <span class="lg-logref__state"
+                  ><i class="ph-bold ph-seal-check"></i>Log not enabled</span
+                >
+              </div>
+              <p class="lg-logref__caveat">
+                The transparency log is not enabled in this phase, so nothing has been checked.
+              </p>
+            </div>
+
+            <div class="lg-logref" data-state="mismatch">
+              <div class="lg-logref__head">
+                <span class="lg-logref__state"
+                  ><i class="ph-bold ph-seal-check"></i>Proof mismatch</span
+                >
+                <span class="lg-spacer"></span>
+                <button class="lg-btn lg-btn--quiet lg-btn--sm" type="button">Re-check</button>
+              </div>
+              <p class="lg-logref__caveat">
+                The stored record does not match its log entry. Treat the record as untrustworthy
+                and re-run the evaluation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Commits and evaluation</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Commit picker</b><span>.lg-commit-list · data-density="compact"</span>
+          </div>
+          <p class="pv-spec__note">
+            The densest surface in the product, and the canonical place the compact density
+            context is applied. The row itself has no idea which mode it is in. Dates are
+            absolute, because a claim pins these exact commits and a relative date silently
+            changes meaning between the render and the screenshot someone pastes into a thread.
+          </p>
+          <ul class="lg-commit-list" aria-label="Commits" data-density="compact">
+            <li class="lg-commit-row" data-selected="true">
+              <span class="lg-ident"
+                ><i class="ph-bold ph-git-commit"></i
+                ><span class="lg-ident__value">4f2c9ab</span></span
+              >
+              <span class="lg-commit-row__subject"
+                >Set Retry-After from the bucket refill interval</span
+              >
+              <span class="lg-commit-row__meta"
+                ><span>arjun-mehrotra</span><time datetime="2026-07-11">11 Jul 2026</time></span
+              >
+            </li>
+            <li class="lg-commit-row">
+              <span class="lg-ident"
+                ><i class="ph-bold ph-git-commit"></i
+                ><span class="lg-ident__value">b81e034</span></span
+              >
+              <span class="lg-commit-row__subject"
+                >Apply the limiter to every public route, not just /v1</span
+              >
+              <span class="lg-commit-row__meta"
+                ><span>arjun-mehrotra</span><time datetime="2026-07-10">10 Jul 2026</time></span
+              >
+            </li>
+            <li class="lg-commit-row">
+              <span class="lg-ident"
+                ><i class="ph-bold ph-git-commit"></i
+                ><span class="lg-ident__value">7cd5119</span></span
+              >
+              <span class="lg-commit-row__subject">Add append-only audit log table</span>
+              <span class="lg-commit-row__meta"
+                ><span>noor-haddad</span><time datetime="2026-07-08">8 Jul 2026</time></span
+              >
+            </li>
+            <li class="lg-commit-row">
+              <span class="lg-ident"
+                ><i class="ph-bold ph-git-commit"></i
+                ><span class="lg-ident__value">e2a70f6</span></span
+              >
+              <span class="lg-commit-row__subject">Move token parsing ahead of rate limiting</span>
+              <span class="lg-commit-row__meta"
+                ><span>noor-haddad</span><time datetime="2026-07-07">7 Jul 2026</time></span
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Never fake a progress percentage</b><span>.lg-eval</span>
+          </div>
+          <p class="pv-spec__note">
+            Evaluation runs synchronously inside the request that submits the claim, so the
+            developer's own tab is held open for its full duration. The bar is indeterminate
+            because there is no honest fraction for an LLM evaluation, and a fabricated
+            percentage is the kind of small lie that costs a user their trust in everything else
+            on the page. The clock turns ochre past 70% of the ceiling so the developer is
+            warned before the request is cut off rather than after, and ochre is not a verdict
+            colour, so it cannot be misread as a result.
+          </p>
+          <div class="pv-stage--stack">
+            <div class="lg-eval">
+              <div class="lg-eval__head">
+                <span class="lg-eval__label"
+                  ><span class="lg-spinner"></span>Reading the pinned commits</span
+                >
+                <span class="lg-eval__clock">0:18 / 1:00</span>
+              </div>
+              <div class="lg-progress" role="progressbar" aria-label="Evaluation in progress">
+                <span class="lg-progress__bar"></span>
+              </div>
+              <p class="lg-eval__note">
+                Keep this tab open. The evaluation runs inside this request, so closing it ends
+                the run before a verdict is recorded.
+              </p>
+            </div>
+
+            <div class="lg-eval">
+              <div class="lg-eval__head">
+                <span class="lg-eval__label"
+                  ><span class="lg-spinner"></span>Reading the pinned commits</span
+                >
+                <span class="lg-eval__clock" data-near-ceiling="true">0:49 / 1:00</span>
+              </div>
+              <div class="lg-progress" role="progressbar" aria-label="Evaluation in progress">
+                <span class="lg-progress__bar"></span>
+              </div>
+              <p class="lg-eval__note">
+                This run is approaching the platform's execution limit. If it is cut off, no
+                verdict is recorded and the claim can be submitted again.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>The undo window is the whole reversible window</b><span>.lg-countdown</span>
+          </div>
+          <p class="pv-spec__note">
+            Repo attachment is permanent once this window closes: there is no detach endpoint and
+            no soft-delete state, so the countdown is the entire reversible period. That is why
+            the remaining time is drawn as a ring and printed as a number inside it, rather than
+            implied by a toast that fades over a duration the user has to guess.
+          </p>
+          <div style="max-width: 26rem">
+            <div class="lg-toast" role="status">
+              <span class="lg-countdown">
+                <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+                  <circle class="lg-countdown__track" cx="14" cy="14" r="12" fill="none" stroke-width="2" />
+                  <circle
+                    class="lg-countdown__ring"
+                    cx="14"
+                    cy="14"
+                    r="12"
+                    fill="none"
+                    stroke-width="2"
+                    stroke-linecap="butt"
+                    stroke-dasharray="75.4"
+                    stroke-dashoffset="25"
+                  />
+                </svg>
+                <span class="lg-countdown__value">42</span>
+              </span>
+              <div class="lg-toast__body">
+                <strong>kestrel-labs/attest-api</strong> attached. This cannot be reversed after
+                the window closes.
+              </div>
+              <button class="lg-btn lg-btn--secondary lg-btn--sm" type="button">
+                <span class="lg-btn__icon"><i class="ph-bold ph-arrow-u-up-left"></i></span>Undo
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="./_theme.js"></script>
+  </body>
+</html>

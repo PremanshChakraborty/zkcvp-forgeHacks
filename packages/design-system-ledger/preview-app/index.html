@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZKCVP · Ledger design system</title>
+    <!--
+      No theme is pinned here. `:root` in tokens.css is light and the dark values
+      are applied by `prefers-color-scheme`, so the page opens in whichever mode
+      the reader's OS is set to. The toggle in the gallery header writes an
+      explicit `data-theme` on <html>, which beats the media query in both
+      directions.
+    -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

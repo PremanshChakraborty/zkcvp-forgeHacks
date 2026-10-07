@@ -1,0 +1,574 @@
+<!-- @dsCard group="Ledger / Components" -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZKCVP Ledger · Components</title>
+    <link rel="stylesheet" href="../styles/ledger.css" />
+    <link rel="stylesheet" href="./preview.css" />
+    <!--
+      Phosphor's web build, for these hand-written pages only. The React layer
+      imports @phosphor-icons/react instead, and the CSS layer has no icon
+      dependency at all: every component takes its glyph as markup. If this CDN
+      is unreachable the <i> elements collapse and the specimens still read
+      correctly, because status in this system is never carried by an icon alone.
+    -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  </head>
+  <body>
+    <div class="pv-page">
+      <header class="pv-head">
+        <div>
+          <div class="pv-head__title">Components</div>
+          <p class="pv-head__sub">
+            The generic layer, as raw markup against the real stylesheet. Anything a React
+            component does, hand-written markup with the same classes does too, which is what
+            makes these pages a real test of the CSS rather than a mock-up of it.
+          </p>
+        </div>
+        <div class="pv-controls">
+          <div class="pv-switch">
+            <span class="pv-switch__label">Theme</span>
+            <div class="pv-switch__row">
+              <button type="button" data-mode="system">OS</button>
+              <button type="button" data-mode="light">Light</button>
+              <button type="button" data-mode="dark">Dark</button>
+            </div>
+          </div>
+          <div class="pv-switch">
+            <span class="pv-switch__label">Density</span>
+            <div class="pv-switch__row">
+              <button type="button" data-density-mode="comfortable">Comfortable</button>
+              <button type="button" data-density-mode="compact">Compact</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="pv-nav" aria-label="Specimen pages">
+        <a href="./index.html">Overview</a>
+        <a href="./foundations.html">Foundations</a>
+        <a href="./components.html" aria-current="page">Components</a>
+        <a href="./domain.html">Domain</a>
+      </nav>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Buttons</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Tones</b><span>.lg-btn--*</span></div>
+          <p class="pv-spec__note">
+            Four tones, and exactly one of them is filled with the accent, because a surface
+            with two primary actions has no primary action. Danger is filled too,
+            deliberately: it is only used for the irreversible operations in this product, and
+            a quiet destructive button is a trap.
+          </p>
+          <div class="pv-stage">
+            <button class="lg-btn lg-btn--primary" type="button">Submit claim</button>
+            <button class="lg-btn lg-btn--secondary" type="button">Verify digest</button>
+            <button class="lg-btn lg-btn--quiet" type="button">Cancel</button>
+            <button class="lg-btn lg-btn--danger" type="button">Remove repository</button>
+            <button class="lg-btn lg-btn--primary" type="button" disabled>Disabled</button>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Sizes</b><span>--lg-control-sm / md / lg</span>
+          </div>
+          <p class="pv-spec__note">
+            Three rungs, shared with every other interactive control, so a button and an input
+            sitting side by side always align on both edges. Labels never wrap: a two-line
+            button is a broken button, and the fix is a shorter label rather than a taller
+            control.
+          </p>
+          <div class="pv-stage">
+            <button class="lg-btn lg-btn--secondary lg-btn--sm" type="button">Small</button>
+            <button class="lg-btn lg-btn--secondary" type="button">Medium</button>
+            <button class="lg-btn lg-btn--secondary lg-btn--lg" type="button">Large</button>
+            <input class="lg-input" style="width: 14rem" placeholder="aligned to md" />
+            <button class="lg-btn lg-btn--secondary lg-icon-btn" type="button" aria-label="Copy">
+              <i class="ph-bold ph-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Icon and loading</b><span>data-loading</span></div>
+          <p class="pv-spec__note">
+            Loading replaces the leading icon with a spinner and keeps the label in place, so
+            the button does not resize mid-request and the cursor does not land on a control
+            that moved.
+          </p>
+          <div class="pv-stage">
+            <button class="lg-btn lg-btn--primary" type="button">
+              <span class="lg-btn__icon"><i class="ph-bold ph-plus"></i></span>
+              Add requirement
+            </button>
+            <button class="lg-btn lg-btn--secondary" type="button">
+              <span class="lg-btn__icon"><i class="ph-bold ph-arrow-clockwise"></i></span>
+              Re-evaluate
+            </button>
+            <button class="lg-btn lg-btn--primary" type="button" data-loading="true" aria-busy="true">
+              <span class="lg-btn__icon"
+                ><span class="lg-spinner" style="width: 14px; height: 14px"></span
+              ></span>
+              Submit claim
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Chips</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Status</b><span>.lg-chip--*</span></div>
+          <p class="pv-spec__note">
+            The only round things in the system. Status is never colour alone: every chip
+            pairs its tone with a text label. Note that "Not satisfied" is a solid ink chip,
+            not a red one, and that "Archived" is dashed so it can never be read as one of
+            the three verdict outcomes.
+          </p>
+          <div class="pv-stage">
+            <span class="lg-chip lg-chip--neutral"
+              ><i class="ph-bold ph-circle"></i>Not evaluated</span
+            >
+            <span class="lg-chip lg-chip--satisfied"
+              ><i class="ph-bold ph-check-circle"></i>Verified</span
+            >
+            <span class="lg-chip lg-chip--unsatisfied"
+              ><i class="ph-bold ph-prohibit"></i>Not satisfied</span
+            >
+            <span class="lg-chip lg-chip--danger"
+              ><i class="ph-bold ph-warning-circle"></i>Evaluation error</span
+            >
+            <span class="lg-chip lg-chip--warning"
+              ><i class="ph-bold ph-warning"></i>Approaching limit</span
+            >
+            <span class="lg-chip lg-chip--archived"
+              ><i class="ph-bold ph-archive"></i>Archived</span
+            >
+            <span class="lg-chip lg-chip--accent">Accent</span>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Dots, versions and roles</b><span>.lg-dot · .lg-version-pill · .lg-chip--role</span>
+          </div>
+          <p class="pv-spec__note">
+            Version stamps are square and monospace, unlike every other chip, because they are
+            identifiers rather than statuses. Role tags carry no hue at all: who someone is
+            must never be confused with what an evaluation concluded, so identity is the one
+            thing in this system that is never coloured.
+          </p>
+          <div class="pv-stage">
+            <span class="lg-dot lg-dot--new" role="img" aria-label="Not evaluated" title="Not evaluated"></span>
+            <span class="lg-dot lg-dot--verified" role="img" aria-label="Verified" title="Verified"></span>
+            <span class="lg-dot lg-dot--eval-failed" role="img" aria-label="Not satisfied" title="Not satisfied"></span>
+            <span class="lg-dot lg-dot--archived" role="img" aria-label="Archived" title="Archived"></span>
+            <span class="lg-version-pill" data-current="true">v4</span>
+            <span class="lg-version-pill">v3</span>
+            <span class="lg-chip lg-chip--role" data-role="stakeholder"
+              ><i class="ph-bold ph-user"></i>Stakeholder</span
+            >
+            <span class="lg-chip lg-chip--role" data-role="developer"
+              ><i class="ph-bold ph-code"></i>Developer</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Forms</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Fields</b><span>.lg-field</span></div>
+          <p class="pv-spec__note">
+            Label above, help text below the control, error text below that. Never a
+            placeholder standing in for a label: a placeholder disappears the moment the user
+            types, which means the one piece of text explaining what a field wants is gone
+            exactly when they are trying to fill it in.
+          </p>
+          <div class="pv-pair">
+            <div class="lg-stack">
+              <div class="lg-field">
+                <label class="lg-field__label" for="f-title"
+                  >Requirement title<span class="lg-field__required" aria-hidden="true">*</span></label
+                >
+                <input
+                  class="lg-input"
+                  id="f-title"
+                  aria-describedby="f-title-help"
+                  placeholder="Rate limiting on the public API"
+                />
+                <span class="lg-field__help" id="f-title-help"
+                  >What the stakeholder will read in the checklist.</span
+                >
+              </div>
+
+              <div class="lg-field">
+                <label class="lg-field__label" for="f-sha">Commit SHA</label>
+                <input
+                  class="lg-input lg-input--mono"
+                  id="f-sha"
+                  aria-invalid="true"
+                  aria-describedby="f-sha-err"
+                  value="4f2c9zz"
+                />
+                <span class="lg-field__error" id="f-sha-err" role="alert">
+                  <i class="ph-bold ph-warning-circle"></i>A commit SHA is 7 to 40 lowercase
+                  hexadecimal characters.
+                </span>
+              </div>
+
+              <div class="lg-field">
+                <label class="lg-field__label" for="f-repo">Repository</label>
+                <select class="lg-select" id="f-repo">
+                  <option>kestrel-labs/attest-api</option>
+                  <option>kestrel-labs/attest-web</option>
+                  <option>kestrel-labs/infra</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="lg-stack">
+              <div class="lg-field">
+                <label class="lg-field__label" for="f-desc">Requirement description</label>
+                <textarea class="lg-textarea" id="f-desc" rows="4" aria-describedby="f-desc-help">
+Requests to the public API are limited per token, and exceeding the limit returns 429 with a Retry-After header.</textarea
+                >
+                <span class="lg-field__help" id="f-desc-help"
+                  >Editing this text creates a new version. Verification status attaches to
+                  the version it was evaluated against, never to whatever is current.</span
+                >
+              </div>
+
+              <fieldset class="lg-fieldset">
+                <legend>Options</legend>
+                <label class="lg-check"
+                  ><input class="lg-check__box" type="checkbox" checked /><span
+                    class="lg-check__label"
+                    >Pin the current requirement version set</span
+                  ></label
+                >
+                <label class="lg-check"
+                  ><input class="lg-check__box" type="checkbox" /><span class="lg-check__label"
+                    >Include archived requirements</span
+                  ></label
+                >
+                <label class="lg-check"
+                  ><input class="lg-check__box" type="checkbox" disabled /><span
+                    class="lg-check__label"
+                    >Not available in this phase</span
+                  ></label
+                >
+              </fieldset>
+
+              <fieldset class="lg-fieldset">
+                <legend>Who can read this report</legend>
+                <label class="lg-check"
+                  ><input class="lg-check__box" type="radio" name="aud" checked /><span
+                    class="lg-check__label"
+                    >Stakeholders on this project</span
+                  ></label
+                >
+                <label class="lg-check"
+                  ><input class="lg-check__box" type="radio" name="aud" /><span
+                    class="lg-check__label"
+                    >Developers on this project</span
+                  ></label
+                >
+              </fieldset>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Containers</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Card and well</b><span>.lg-card · .lg-well</span></div>
+          <p class="pv-spec__note">
+            Cards are bounded by rules, never lifted: nothing in this system uses a shadow to
+            say "this is a group". The well is cut into the page instead, and holds data the
+            system read rather than chrome the app wrote. Keeping those two visually opposed
+            is what makes "this is what was actually read" legible.
+          </p>
+          <div class="pv-pair">
+            <section class="lg-card">
+              <header class="lg-card__header">
+                <h3 class="lg-card__title">Claim 118</h3>
+                <span class="lg-spacer"></span>
+                <span class="lg-version-pill" data-current="true">v4</span>
+              </header>
+              <div class="lg-card__body">
+                <dl class="lg-dl">
+                  <dt>Repository</dt>
+                  <dd>
+                    <span class="lg-ident"
+                      ><i class="ph-bold ph-book-bookmark"></i
+                      ><span class="lg-ident__prefix">kestrel-labs/</span
+                      ><span class="lg-ident__value">attest-api</span></span
+                    >
+                  </dd>
+                  <dt>Commit</dt>
+                  <dd>
+                    <span class="lg-ident" title="4f2c9ab8e1d740c5b3aa92f0177de6c4419ab8e1"
+                      ><i class="ph-bold ph-git-commit"></i
+                      ><span class="lg-ident__value">4f2c9ab</span></span
+                    >
+                  </dd>
+                  <dt>Submitted by</dt>
+                  <dd>arjun-mehrotra</dd>
+                </dl>
+              </div>
+              <footer class="lg-card__footer">
+                <button class="lg-btn lg-btn--primary lg-btn--sm" type="button">Open report</button>
+                <button class="lg-btn lg-btn--quiet lg-btn--sm" type="button">History</button>
+              </footer>
+            </section>
+
+            <div class="lg-well">
+              <span class="lg-micro-label">Pinned inputs</span>
+              <div class="lg-stack lg-stack--tight" style="margin-top: var(--lg-space-2)">
+                <span class="lg-ident"
+                  ><i class="ph-bold ph-book-bookmark"></i
+                  ><span class="lg-ident__prefix">kestrel-labs/</span
+                  ><span class="lg-ident__value">attest-api</span></span
+                >
+                <span class="lg-ident" title="sha256:9f3ac1d2b47e8850cc61a0f5e2d93b74be2049aa"
+                  ><span class="lg-ident__prefix">sha256:</span
+                  ><span class="lg-ident__value">9f3ac1…7be204</span></span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Table</b><span>.lg-table · .lg-scroll-x</span></div>
+          <p class="pv-spec__note">
+            Ruled, not striped. Zebra rows fight with status chips for the reader's attention,
+            and in a table whose whole job is to carry status that is a bad trade. Always
+            wrapped in .lg-scroll-x, so wide content scrolls inside its own container and the
+            page body never scrolls sideways.
+          </p>
+          <div class="lg-scroll-x">
+            <table class="lg-table" aria-label="Claims">
+              <thead>
+                <tr>
+                  <th>Claim</th>
+                  <th>Repository</th>
+                  <th>Commit</th>
+                  <th class="lg-table__cell--num">Requirements</th>
+                  <th class="lg-table__cell--shrink">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-interactive="true">
+                  <td>118</td>
+                  <td>kestrel-labs/attest-api</td>
+                  <td class="lg-table__cell--mono">4f2c9ab</td>
+                  <td class="lg-table__cell--num">4</td>
+                  <td class="lg-table__cell--shrink">
+                    <span class="lg-chip lg-chip--satisfied"
+                      ><i class="ph-bold ph-check-circle"></i>Verified</span
+                    >
+                  </td>
+                </tr>
+                <tr data-interactive="true">
+                  <td>117</td>
+                  <td>kestrel-labs/attest-api</td>
+                  <td class="lg-table__cell--mono">b81e034</td>
+                  <td class="lg-table__cell--num">4</td>
+                  <td class="lg-table__cell--shrink">
+                    <span class="lg-chip lg-chip--unsatisfied"
+                      ><i class="ph-bold ph-prohibit"></i>Not satisfied</span
+                    >
+                  </td>
+                </tr>
+                <tr data-interactive="true">
+                  <td>116</td>
+                  <td>kestrel-labs/attest-web</td>
+                  <td class="lg-table__cell--mono">7cd5119</td>
+                  <td class="lg-table__cell--num">2</td>
+                  <td class="lg-table__cell--shrink">
+                    <span class="lg-chip lg-chip--neutral"
+                      ><i class="ph-bold ph-circle"></i>Not evaluated</span
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Navigation</b><span>.lg-tabs · .lg-breadcrumb · .lg-nav-item</span>
+          </div>
+          <p class="pv-spec__note">
+            Tabs scroll horizontally rather than wrapping, because a two-line tab bar reorders
+            itself as the label set changes and destroys the muscle memory that is most of
+            what tabs are for. The active nav item carries a left rule and a weight change as
+            well as the accent tint, so it stays legible without relying on hue.
+          </p>
+          <div class="pv-stage--block">
+            <nav aria-label="Breadcrumb" style="margin-bottom: var(--lg-space-4)">
+              <ol class="lg-breadcrumb">
+                <li><a href="#">Projects</a><i class="ph-bold ph-caret-right lg-breadcrumb__sep"></i></li>
+                <li><a href="#">Attestation API</a><i class="ph-bold ph-caret-right lg-breadcrumb__sep"></i></li>
+                <li><span aria-current="page">Claim 118</span></li>
+              </ol>
+            </nav>
+
+            <div class="lg-tabs" role="tablist" aria-label="Claim sections" style="margin-bottom: var(--lg-space-5)">
+              <button class="lg-tab" role="tab" type="button" aria-selected="true">Report</button>
+              <button class="lg-tab" role="tab" type="button" aria-selected="false" tabindex="-1">Requirements</button>
+              <button class="lg-tab" role="tab" type="button" aria-selected="false" tabindex="-1">Commits</button>
+              <button class="lg-tab" role="tab" type="button" aria-selected="false" tabindex="-1">Evidence</button>
+              <button class="lg-tab" role="tab" type="button" aria-selected="false" tabindex="-1">History</button>
+            </div>
+
+            <div style="border: 1px solid var(--lg-rule); display: flex; max-width: 20rem">
+              <nav class="lg-sidenav" aria-label="Project">
+                <div class="lg-sidenav__section">
+                  <span class="lg-sidenav__section-label">Project</span>
+                  <a class="lg-nav-item" href="#" aria-current="page"
+                    ><i class="ph-bold ph-check-circle"></i
+                    ><span class="lg-truncate">Requirements</span
+                    ><span class="lg-nav-item__count">14</span></a
+                  >
+                  <a class="lg-nav-item" href="#"
+                    ><span class="lg-truncate">Claims</span
+                    ><span class="lg-nav-item__count">7</span></a
+                  >
+                  <a class="lg-nav-item" href="#"
+                    ><span class="lg-truncate">Repositories</span
+                    ><span class="lg-nav-item__count">2</span></a
+                  >
+                </div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Feedback</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Alerts</b><span>.lg-alert--*</span></div>
+          <p class="pv-spec__note">
+            No coloured band down the left edge. Tone is carried by the icon, the tinted
+            background and the words. The danger tone means the run did not finish, and it
+            says nothing about whether the code satisfies the requirement, which is why a
+            negative verdict never uses it.
+          </p>
+          <div class="pv-stage--stack">
+            <div class="lg-alert lg-alert--info" role="status">
+              <span class="lg-alert__icon"><i class="ph-bold ph-info"></i></span>
+              <div class="lg-alert__body">
+                <strong class="lg-alert__title">Requirements are versioned</strong>
+                <div>
+                  Editing a requirement's text creates a new version. Verification status
+                  attaches to the version it was evaluated against, never to whatever is
+                  current.
+                </div>
+              </div>
+            </div>
+
+            <div class="lg-alert lg-alert--success" role="status">
+              <span class="lg-alert__icon"><i class="ph-bold ph-check-circle"></i></span>
+              <div class="lg-alert__body">
+                <strong class="lg-alert__title">Evaluation complete</strong>
+                <div>
+                  Four requirement versions were read at the pinned commits. The report is
+                  visible to stakeholders on this project.
+                </div>
+              </div>
+            </div>
+
+            <div class="lg-alert lg-alert--warning" role="status">
+              <span class="lg-alert__icon"><i class="ph-bold ph-warning"></i></span>
+              <div class="lg-alert__body">
+                <strong class="lg-alert__title">Approaching the execution limit</strong>
+                <div>
+                  This run has used most of the platform's execution budget. If it is cut off,
+                  no verdict is recorded and the claim can be submitted again.
+                </div>
+              </div>
+            </div>
+
+            <div class="lg-alert lg-alert--danger" role="alert">
+              <span class="lg-alert__icon"><i class="ph-bold ph-warning-circle"></i></span>
+              <div class="lg-alert__body">
+                <strong class="lg-alert__title">GitHub rate limit reached</strong>
+                <div>
+                  The Evaluator could not finish reading the pinned commits. No verdict was
+                  recorded, and this says nothing about whether the code satisfies the
+                  requirement.
+                </div>
+                <div class="lg-alert__actions">
+                  <button class="lg-btn lg-btn--secondary lg-btn--sm" type="button">Retry</button>
+                  <button class="lg-btn lg-btn--quiet lg-btn--sm" type="button">Dismiss</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Indicators, skeleton and empty state</b
+            ><span>.lg-spinner · .lg-progress · .lg-skeleton · .lg-empty</span>
+          </div>
+          <p class="pv-spec__note">
+            The spinner and the indeterminate bar slow under reduced motion rather than
+            stopping, because a frozen spinner says "hung" about a request that is still
+            running. The skeleton shimmer is decorative and stops outright.
+          </p>
+          <div class="pv-stage--block">
+            <div class="lg-row-flex" style="margin-bottom: var(--lg-space-4)">
+              <span class="lg-spinner"></span>
+              <span class="lg-caption">Reading the pinned commits</span>
+            </div>
+
+            <div class="lg-progress" role="progressbar" aria-label="Evaluation in progress" style="margin-bottom: var(--lg-space-5)">
+              <span class="lg-progress__bar"></span>
+            </div>
+
+            <div class="lg-stack lg-stack--tight" style="max-width: 34rem; margin-bottom: var(--lg-space-5)">
+              <span class="lg-skeleton" style="width: 45%"></span>
+              <span class="lg-skeleton" style="width: 100%"></span>
+              <span class="lg-skeleton" style="width: 88%"></span>
+              <span class="lg-skeleton" style="width: 26%"></span>
+            </div>
+
+            <div class="lg-empty">
+              <h3 class="lg-empty__title">No requirements yet</h3>
+              <p class="lg-empty__body">
+                A stakeholder defines what has to be true, as a versioned checklist. Nothing
+                can be claimed or evaluated until there is at least one entry.
+              </p>
+              <button class="lg-btn lg-btn--primary" type="button">
+                <span class="lg-btn__icon"><i class="ph-bold ph-plus"></i></span>Add requirement
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="./_theme.js"></script>
+  </body>
+</html>
