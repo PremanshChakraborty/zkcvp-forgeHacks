@@ -1,0 +1,29 @@
+diff --git a/node_modules/@auth/core/lib/utils/assert.js b/node_modules/@auth/core/lib/utils/assert.js
+index 7236288..fef734d 100644
+--- a/node_modules/@auth/core/lib/utils/assert.js
++++ b/node_modules/@auth/core/lib/utils/assert.js
+@@ -12,9 +12,6 @@ function isValidHttpUrl(url, baseUrl) {
+ function isSemverString(version) {
+     return /^v\d+(?:\.\d+){0,2}$/.test(version);
+ }
+-let hasCredentials = false;
+-let hasEmail = false;
+-let hasWebAuthn = false;
+ const emailMethods = [
+     "createVerificationToken",
+     "useVerificationToken",
+@@ -49,6 +46,14 @@ const webauthnMethods = [
+  * This is invoked before the init method, so default values are not available yet.
+  */
+ export function assertConfig(request, options) {
++    // PATCHED (zkcvp): these were module-level `let`s, set to true and never
++    // reset, so they leaked between separate Auth.js instances sharing a
++    // process. Our adapter-less GitHub instance was told "email login requires
++    // an adapter" purely because the stakeholder instance had asserted first.
++    // `warned` stays module-level on purpose (warn-once).
++    let hasCredentials = false;
++    let hasEmail = false;
++    let hasWebAuthn = false;
+     const { url } = request;
+     const warnings = [];
+     if (!warned && options.debug)

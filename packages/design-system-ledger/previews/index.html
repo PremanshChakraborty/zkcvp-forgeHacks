@@ -1,0 +1,163 @@
+<!-- @dsCard group="Ledger / Overview" -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZKCVP Ledger</title>
+    <link rel="stylesheet" href="../styles/ledger.css" />
+    <link rel="stylesheet" href="./preview.css" />
+  </head>
+  <body>
+    <div class="pv-page">
+      <header class="pv-head">
+        <div>
+          <div class="pv-head__title">ZKCVP Ledger</div>
+          <p class="pv-head__sub">
+            A second visual language over the same domain. Where the first direction reads
+            like a forensic tool at 2am, Ledger reads like a countersigned document:
+            light-first, ink on paper, square ruled structure, a real measure for prose, and
+            a compact density context for the developer's data surfaces rather than
+            compactness as the default.
+          </p>
+        </div>
+        <div class="pv-controls">
+          <div class="pv-switch">
+            <span class="pv-switch__label">Theme</span>
+            <div class="pv-switch__row">
+              <button type="button" data-mode="system">OS</button>
+              <button type="button" data-mode="light">Light</button>
+              <button type="button" data-mode="dark">Dark</button>
+            </div>
+          </div>
+          <div class="pv-switch">
+            <span class="pv-switch__label">Density</span>
+            <div class="pv-switch__row">
+              <button type="button" data-density-mode="comfortable">Comfortable</button>
+              <button type="button" data-density-mode="compact">Compact</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="pv-nav" aria-label="Specimen pages">
+        <a href="./index.html" aria-current="page">Overview</a>
+        <a href="./foundations.html">Foundations</a>
+        <a href="./components.html">Components</a>
+        <a href="./domain.html">Domain</a>
+      </nav>
+
+      <section class="pv-section">
+        <h2 class="pv-section__title">Pages</h2>
+        <div class="pv-grid">
+          <a class="pv-card" href="./foundations.html">
+            <div class="pv-card__title">Foundations</div>
+            <p class="pv-card__body">
+              Surfaces, accent, the verdict family, type scale, space, shape, rules and
+              motion. Every value is a custom property in tokens.css.
+            </p>
+          </a>
+          <a class="pv-card" href="./components.html">
+            <div class="pv-card__title">Components</div>
+            <p class="pv-card__body">
+              Buttons, chips, forms, cards, wells, tables, navigation and feedback, as raw
+              markup against the real stylesheet.
+            </p>
+          </a>
+          <a class="pv-card" href="./domain.html">
+            <div class="pv-card__title">Domain</div>
+            <p class="pv-card__body">
+              Requirements, verdicts, sealed evidence, log references and commits. Each one
+              encodes a rule that keeps a surface from saying something false.
+            </p>
+          </a>
+        </div>
+      </section>
+
+      <section class="pv-section">
+        <h2 class="pv-section__title">What changed, and why</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>The accent moved from amber to ink blue</b></div>
+          <p class="pv-spec__note">
+            Amber is a light fill, so it needed a separate value for text and for
+            backgrounds in both themes, and white text on it fails contrast at any size.
+            This blue clears 7.6:1 as text on paper and as a fill under white text, so light
+            mode needs only one value and the checkbox tick needs only one glyph. Blue also
+            frees the verdict family from having to avoid it.
+          </p>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>A negative verdict is set in ink, not in a hue</b></div>
+          <p class="pv-spec__note">
+            The first direction gave <code>not_satisfied</code> its own periwinkle so it
+            would not read as an error. Ledger removes the hue entirely and renders it as a
+            solid ink chip. It cannot sit near the red reserved for things that actually
+            broke, it survives greyscale and colour-blind rendering, and it is honest about
+            weight: a negative verdict is the most emphatic recorded fact on the page.
+          </p>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Role identity lost its colour on purpose</b></div>
+          <p class="pv-spec__note">
+            Stakeholder and developer were blue and slate. Blue is now the accent, so they
+            could not keep it, and dropping hue turned out to express the underlying rule
+            more strongly than any pair of colours did: who someone is must never be
+            confused with what an evaluation concluded, so identity is the one thing in this
+            system that is never coloured.
+          </p>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Density became a context instead of two row tokens</b></div>
+          <p class="pv-spec__note">
+            The first direction shipped a dense row height and a comfortable one side by
+            side, and every component had to pick. Here the comfortable values are the
+            default and <code>[data-density="compact"]</code> re-points the same tokens, so
+            a commit table can be dense inside a page that is not, and no component needs to
+            know which mode it is in. The switch above changes every specimen on every page.
+          </p>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>The domain rules did not change at all</b></div>
+          <p class="pv-spec__note">
+            <code>eval_failed</code> still renders as "Not satisfied". Sealed evidence still
+            keeps its verify action live. An inclusion proof still carries the sentence
+            saying it does not prove the judgment was correct. Digests are still truncated in
+            the middle. <code>components/types.ts</code> is byte-identical to the first
+            direction's copy, deliberately: two visual languages over one domain, and if
+            that file ever diverges, one of the two is misinforming someone.
+          </p>
+        </div>
+      </section>
+
+      <section class="pv-section">
+        <h2 class="pv-section__title">Running the React gallery</h2>
+        <div class="pv-spec">
+          <p class="pv-spec__note">
+            These pages are hand-written markup, so they prove the stylesheet works without
+            a build step. The React gallery renders the same system through the actual TSX
+            components, and is the surface to check when changing a component rather than a
+            class.
+          </p>
+          <div class="lg-well">
+            <pre
+              class="lg-mono"
+              style="font-size: var(--lg-text-200); white-space: pre-wrap"
+            >
+cd design-system-ledger
+npm install
+npm run dev        # gallery at http://localhost:5173
+npm run typecheck  # components + gallery, strict</pre
+            >
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="./_theme.js"></script>
+  </body>
+</html>

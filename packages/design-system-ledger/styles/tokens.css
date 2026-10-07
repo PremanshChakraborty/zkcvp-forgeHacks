@@ -1,0 +1,582 @@
+/* =============================================================================
+   ZKCVP · Ledger — Tokens
+   -----------------------------------------------------------------------------
+   Direction: the record, not the terminal.
+
+   An earlier direction (since removed) read like a forensic tool at 2am — dark
+   canvas, hairline ramp, amber signal, dense by default. Ledger instead reads
+   like a countersigned document: light-first, high-contrast ink on paper, square
+   ruled structure, a real measure for prose, and a compact density context for
+   the developer's data surfaces rather than compactness as the default. Several
+   notes below contrast the two where it explains why a value was chosen.
+
+   Light-first. `:root` holds the light values; dark is applied either by the OS
+   preference or by an explicit `data-theme` on <html>. The explicit attribute
+   always wins in both directions so a theme toggle can override the OS.
+
+   Nothing outside this file should contain a raw hex value. Component CSS reads
+   the SEMANTIC names only — there is deliberately no exposed neutral ramp
+   (`--lg-ink-600` and friends), because a ramp read directly by components
+   cannot be inverted for dark mode without every call site being audited.
+   ============================================================================= */
+
+:root {
+  color-scheme: light;
+
+  /* ---------------------------------------------------------------------------
+     Surfaces — two, plus a well. Not a four-step ramp.
+
+     Structure in Ledger comes from rules and typographic weight, so stacked
+     surface tints are not needed to separate regions. What remains is the one
+     distinction that is semantically load-bearing:
+
+     `--lg-well` is DARKER than the canvas. Cards sit above the page and hold
+     chrome; wells are cut into it and hold evidence. Keeping those visually
+     opposed is what makes "this is data the system actually read" legible, and
+     it is the one surface rule carried over from the first direction unchanged.
+     --------------------------------------------------------------------------- */
+  --lg-canvas: #f8f8f7;
+  --lg-surface: #ffffff;
+  --lg-well: #f0f0ee;
+  --lg-hover: #eeeeea;
+  --lg-active: #e4e4e0;
+  --lg-overlay: rgba(19, 19, 18, 0.4);
+
+  /* ---------------------------------------------------------------------------
+     Rules — three weights, three jobs.
+
+     `--lg-rule`        routine division: row separators, card edges, table grid
+     `--lg-rule-strong` control edges and table header underlines
+     `--lg-rule-ink`    the signature. A full-strength ink rule under a page or
+                        section heading, and nowhere else. It is typographic,
+                        never a status carrier: no surface in this system gets a
+                        coloured edge or side tab to encode state.
+     --------------------------------------------------------------------------- */
+  --lg-rule: #e2e2de;
+  --lg-rule-strong: #c5c5bf;
+  --lg-rule-ink: #131312;
+
+  /* Text. `faint` is under 3:1 by design and is for non-essential content only
+     (disabled labels, decorative counters) — never for information. */
+  --lg-text: #131312;
+  --lg-text-secondary: #5c5c57;
+  --lg-text-muted: #757570;
+  --lg-text-faint: #9a9a94;
+
+  /* ---------------------------------------------------------------------------
+     Accent — ink fill, blue label. Interactive affordances only: primary
+     actions, links, focus, active nav, selected tab. Outside the verdict family
+     so it can never be mistaken for a result.
+
+     The two tokens now hold DIFFERENT values in both themes, and the split is
+     the point rather than a contrast workaround:
+
+       --lg-accent-solid   ink. Primary buttons, checked boxes, progress fills.
+       --lg-accent         blue. Links, icons, focus rings.
+
+     A filled action is the loudest thing on a screen, and ink is the only
+     value that carries that weight without spending a hue — which matters
+     because every hue in this system already means something. Blue stays on
+     the label role, where a link has to look like a link and a focus ring has
+     to be distinguishable from the control it sits on.
+
+     The cost is real and is paid in two places: the checkbox needs a tick
+     glyph per theme (see --lg-icon-check), and `unsatisfied` had to leave ink
+     to make room. Both are recorded where they land.
+     --------------------------------------------------------------------------- */
+  --lg-accent: #1746c9; /* text, icons, links — still blue */
+  --lg-accent-solid: #131312; /* filled backgrounds — ink */
+  --lg-accent-hover: #2f2f2b;
+  --lg-accent-active: #43433e;
+  --lg-accent-subtle: rgba(23, 70, 201, 0.08);
+  --lg-accent-rule: rgba(23, 70, 201, 0.34);
+  --lg-on-accent: #ffffff;
+
+  /* ---------------------------------------------------------------------------
+     Verdict semantics — never colour alone.
+
+     Four meanings that must stay apart:
+
+       satisfied     green   the Evaluator returned satisfied
+       unsatisfied   red     the Evaluator returned NOT satisfied — a real result
+       danger        red     a true error: rate limit, crash, blown ceiling
+       new           grey    never evaluated — an absence, not a caution
+
+     `unsatisfied` and `danger` deliberately share one red. Two near-identical
+     reds meaning opposite kinds of thing is harder to read than one red
+     meaning "negative", so the pair is separated by WEIGHT instead:
+
+       a verdict   is a tinted outline chip, built exactly like `satisfied`
+       a failure   is a bordered alert panel, or red text under a field
+
+     Nothing red is a solid fill. That rule is what keeps the two legible side
+     by side, and it is why Archive is `neutral` rather than `danger` — a
+     filled red button next to a red chip was the one place they collided.
+
+     A verdict now reads as a matched pair: green chip and red chip, same
+     construction, opposite conclusions. `new` stays hollow and grey, so
+     "recorded negative" and "never assessed" remain opposites at a glance.
+
+     What this gives up, honestly: ink survived greyscale and colour-blind
+     rendering on lightness alone. Red does not — it separates from green on
+     hue, and under deuteranopia both shift. The system's own rule covers it,
+     since every chip carries a glyph and a label and colour is never the only
+     carrier, but the guarantee is weaker than it was. Note that `satisfied`
+     and `danger` already had identical relative luminance, so greyscale was
+     never separating those two either.
+     --------------------------------------------------------------------------- */
+
+  /* satisfied — status 'verified', verdict 'satisfied' */
+  --lg-satisfied: #0c6b45;
+  --lg-satisfied-solid: #0c6b45;
+  --lg-satisfied-subtle: rgba(12, 107, 69, 0.09);
+  --lg-satisfied-rule: rgba(12, 107, 69, 0.3);
+  --lg-on-satisfied: #ffffff;
+
+  /* unsatisfied — status 'eval_failed', verdict 'not_satisfied'.
+     A legitimate negative verdict, and now the same red as `danger`.
+
+     One red rather than two near-identical ones: two reds meaning different
+     kinds of thing is harder to read than one red meaning "negative", and the
+     separation is carried by WEIGHT instead. A verdict is a tinted outline
+     chip, matching `satisfied`; a failure is a bordered alert panel. Nothing
+     red is a solid fill any more — see the note on `danger`. */
+  --lg-unsatisfied: #b3261e;
+  --lg-unsatisfied-solid: #b3261e;
+  --lg-unsatisfied-subtle: rgba(179, 38, 30, 0.08);
+  --lg-unsatisfied-rule: rgba(179, 38, 30, 0.3);
+  --lg-on-unsatisfied: #ffffff;
+
+  /* danger — true errors only, and irreversible destructive actions.
+     GitHub rate limit, evaluator crash, blown execution ceiling, proof
+     mismatch, permanent repo removal. Never a verdict. */
+  --lg-danger: #b3261e;
+  --lg-danger-solid: #b3261e;
+  --lg-danger-hover: #99201a;
+  --lg-danger-subtle: rgba(179, 38, 30, 0.08);
+  --lg-danger-rule: rgba(179, 38, 30, 0.3);
+  --lg-on-danger: #ffffff;
+
+  /* new — never evaluated. Colourless on purpose. */
+  --lg-neutral: #757570;
+  --lg-neutral-solid: #5c5c57;
+  --lg-neutral-subtle: rgba(117, 117, 112, 0.09);
+  --lg-neutral-rule: #c5c5bf;
+
+  /* ---------------------------------------------------------------------------
+     Warning — its own hue, unlike the first direction.
+
+     There, `warning` could alias the accent because the accent was already
+     amber. Here the accent is blue, and blue does not read as caution, so
+     Ledger carries a real sixth slot.
+
+     That is safe for the same reason it was safe there: ochre is not a verdict
+     colour, so an ochre "approaching the request time limit" clock cannot be
+     read as a result. Anything that has actually failed uses `danger`.
+     --------------------------------------------------------------------------- */
+  --lg-warning: #7a5200;
+  --lg-warning-solid: #8a5c00;
+  --lg-warning-subtle: rgba(122, 82, 0, 0.1);
+  --lg-warning-rule: rgba(122, 82, 0, 0.3);
+  --lg-on-warning: #ffffff;
+
+  /* ---------------------------------------------------------------------------
+     Role identity — deliberately the only chip family in the system with NO
+     colour at all.
+
+     The first direction gave stakeholder and developer their own hues (blue and
+     slate). Here blue is the accent, so roles could not keep it — and removing
+     hue turned out to express the underlying rule more strongly than any pair
+     of colours did: who someone is must never be confused with what an
+     evaluation concluded, so identity is the one thing that is never coloured.
+
+     The two roles are separated by fill weight and by glyph, not by hue.
+     --------------------------------------------------------------------------- */
+  --lg-role-fill: #eeeeea; /* stakeholder: filled */
+  --lg-role-rule: #c5c5bf; /* developer: outlined only */
+  --lg-role-text: #5c5c57;
+
+  /* archived — orthogonal to status. Dashed, so it never reads as a verdict. */
+  --lg-archived: #9a9a94;
+  --lg-archived-rule: #c5c5bf;
+
+  --lg-selection: rgba(23, 70, 201, 0.16);
+  --lg-focus-color: #1746c9;
+
+  /* ---------------------------------------------------------------------------
+     Status aliases — the only names domain CSS should reference, so a change of
+     mind about which hue carries which meaning happens in exactly one place.
+     --------------------------------------------------------------------------- */
+  --lg-status-new: var(--lg-neutral);
+  --lg-status-new-subtle: transparent;
+  --lg-status-new-rule: var(--lg-neutral-rule);
+
+  --lg-status-verified: var(--lg-satisfied);
+  --lg-status-verified-subtle: var(--lg-satisfied-subtle);
+  --lg-status-verified-rule: var(--lg-satisfied-rule);
+
+  /* subtle/rule rather than solid twice over: eval_failed is a hue chip now,
+     built like verified rather than like a filled badge. */
+  --lg-status-eval-failed: var(--lg-unsatisfied);
+  --lg-status-eval-failed-subtle: var(--lg-unsatisfied-subtle);
+  --lg-status-eval-failed-rule: var(--lg-unsatisfied-rule);
+
+  --lg-status-error: var(--lg-danger);
+  --lg-status-error-subtle: var(--lg-danger-subtle);
+  --lg-status-error-rule: var(--lg-danger-rule);
+
+  --lg-status-archived: var(--lg-archived);
+  --lg-status-archived-subtle: transparent;
+  --lg-status-archived-rule: var(--lg-archived-rule);
+
+  /* ---------------------------------------------------------------------------
+     Checkbox tick. A data URI cannot read a custom property, so the colour is
+     baked in and this file is the one place a literal value is allowed.
+
+     TWO glyphs, one per theme, because the accent fills ink. Light mode fills
+     the box near-black and takes the white tick; dark mode fills it near-white
+     and needs an ink one. A single white tick would be invisible on the dark
+     theme's fill.
+
+     This is the cost the blue accent used to avoid, recorded here because it
+     is easy to reintroduce: any accent that is light in either theme needs a
+     matching pair. (The earlier amber direction paid the same price for a
+     different reason — white on amber computes to about 2:1 and fails WCAG
+     1.4.11, so it too had to bake a near-black tick.)
+     --------------------------------------------------------------------------- */
+  --lg-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3l2.3 2.3 4.9-5' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --lg-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 6h6' fill='none' stroke='%23ffffff' stroke-width='1.9' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  /* ---------------------------------------------------------------------------
+     Typography — Geist Sans and Geist Mono.
+
+     The scale is numeric, so "is 400 bigger than 300" is never a question, and
+     it is in `rem` rather than `px`, so a reader who raises their browser's
+     base font size gets a system that grows with them. Every derived size
+     (control heights, row heights, the prose measure) is in rem for the same
+     reason.
+
+     300 is the default UI size. 400 is the reading size and appears only where
+     there are real sentences: evaluator rationales and requirement
+     descriptions. 800 is a display tier the first direction did not have —
+     Ledger needs one because a verdict headline is the largest fact on a
+     stakeholder's screen.
+     --------------------------------------------------------------------------- */
+  --lg-font-sans: "Geist", "Geist Sans", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --lg-font-mono: "Geist Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo,
+    Consolas, "Liberation Mono", monospace;
+
+  --lg-text-50: 0.6875rem; /* 11px — uppercase micro-labels only */
+  --lg-text-50-lh: 1rem;
+  --lg-text-100: 0.75rem; /* 12 */
+  --lg-text-100-lh: 1.125rem;
+  --lg-text-200: 0.8125rem; /* 13 — compact-density body */
+  --lg-text-200-lh: 1.25rem;
+  --lg-text-300: 0.875rem; /* 14 — default UI */
+  --lg-text-300-lh: 1.375rem;
+  --lg-text-400: 0.9375rem; /* 15 — prose */
+  --lg-text-400-lh: 1.5rem;
+  --lg-text-500: 1.0625rem; /* 17 */
+  --lg-text-500-lh: 1.625rem;
+  --lg-text-600: 1.3125rem; /* 21 */
+  --lg-text-600-lh: 1.75rem;
+  --lg-text-700: 1.75rem; /* 28 */
+  --lg-text-700-lh: 2.125rem;
+  --lg-text-800: 2.25rem; /* 36 — display */
+  --lg-text-800-lh: 2.5rem;
+
+  --lg-weight-regular: 400;
+  --lg-weight-medium: 500;
+  --lg-weight-semibold: 600;
+
+  --lg-tracking-display: -0.021em;
+  --lg-tracking-tight: -0.01em;
+  --lg-tracking-normal: 0;
+  --lg-tracking-label: 0.08em; /* uppercase micro-labels only */
+
+  /* ---------------------------------------------------------------------------
+     Space — a 4px scale, in rem. 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64.
+     --------------------------------------------------------------------------- */
+  --lg-space-0: 0;
+  --lg-space-1: 0.25rem;
+  --lg-space-2: 0.5rem;
+  --lg-space-3: 0.75rem;
+  --lg-space-4: 1rem;
+  --lg-space-5: 1.5rem;
+  --lg-space-6: 2rem;
+  --lg-space-7: 3rem;
+  --lg-space-8: 4rem;
+
+  /* ---------------------------------------------------------------------------
+     Density is a CONTEXT, not a pair of fixed row tokens.
+
+     The first direction shipped `--ds-row-dense` (36px) and `--ds-row-comfy`
+     (48px) side by side, and every component had to pick one. Here the
+     comfortable values are the default and `[data-density="compact"]` re-points
+     the same tokens, so a commit table can be dense inside a page that is not,
+     without any component knowing which mode it is in.
+     --------------------------------------------------------------------------- */
+  --lg-row: 2.75rem; /* 44px */
+  --lg-control-sm: 1.75rem; /* 28 */
+  --lg-control-md: 2.125rem; /* 34 */
+  --lg-control-lg: 2.5rem; /* 40 */
+  --lg-cell-pad-x: var(--lg-space-3);
+  --lg-page-pad: var(--lg-space-5);
+  --lg-text-base: var(--lg-text-300);
+  --lg-text-base-lh: var(--lg-text-300-lh);
+
+  /* ---------------------------------------------------------------------------
+     Shape — square. The rule is: surfaces and controls have no radius; only
+     chips and avatars are round. There is no middle radius to get wrong.
+     --------------------------------------------------------------------------- */
+  --lg-radius: 0;
+  --lg-radius-pill: 999px;
+
+  /* ---------------------------------------------------------------------------
+     Elevation — one shadow, for things that genuinely float above the document
+     (popovers, toasts). Cards and wells are bounded by rules, never lifted.
+     --------------------------------------------------------------------------- */
+  --lg-shadow-pop: 0 1px 0 rgba(19, 19, 18, 0.04),
+    0 10px 28px rgba(19, 19, 18, 0.13);
+
+  --lg-focus-width: 2px;
+  --lg-focus-offset: 2px;
+
+  /* ---------------------------------------------------------------------------
+     Motion. `--lg-dur-indicator` is deliberately separate from the interaction
+     durations: under `prefers-reduced-motion` the interaction durations drop to
+     0ms, but the indicator duration only SLOWS. Freezing a spinner or an
+     indeterminate bar makes a request that is genuinely still running look
+     hung, which misinforms rather than accommodates. Purely decorative motion
+     (the skeleton shimmer) stops outright.
+     --------------------------------------------------------------------------- */
+  --lg-dur-1: 80ms;
+  --lg-dur-2: 140ms;
+  --lg-dur-3: 200ms;
+  --lg-dur-indicator: 1100ms;
+  --lg-ease: cubic-bezier(0.2, 0, 0.13, 1);
+  --lg-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layering */
+  --lg-z-base: 0;
+  --lg-z-sticky: 100;
+  --lg-z-dropdown: 200;
+  --lg-z-overlay: 300;
+  --lg-z-modal: 400;
+  --lg-z-toast: 500;
+
+  /* Layout */
+  --lg-container: 1200px;
+  --lg-measure: 66ch;
+  --lg-sidenav: 232px;
+}
+
+/* -----------------------------------------------------------------------------
+   Compact density. Re-points the density tokens for a subtree; no component
+   needs to know it is in this mode.
+   ----------------------------------------------------------------------------- */
+[data-density="compact"] {
+  --lg-row: 2rem; /* 32px */
+  --lg-control-sm: 1.5rem; /* 24 */
+  --lg-control-md: 1.875rem; /* 30 */
+  --lg-control-lg: 2.25rem; /* 36 */
+  --lg-cell-pad-x: var(--lg-space-2);
+  --lg-page-pad: var(--lg-space-4);
+  --lg-text-base: var(--lg-text-200);
+  --lg-text-base-lh: var(--lg-text-200-lh);
+}
+
+[data-density="comfortable"] {
+  --lg-row: 2.75rem;
+  --lg-control-sm: 1.75rem;
+  --lg-control-md: 2.125rem;
+  --lg-control-lg: 2.5rem;
+  --lg-cell-pad-x: var(--lg-space-3);
+  --lg-page-pad: var(--lg-space-5);
+  --lg-text-base: var(--lg-text-300);
+  --lg-text-base-lh: var(--lg-text-300-lh);
+}
+
+/* =============================================================================
+   Dark theme.
+
+   Only the colour tokens move. Type, space, shape, density and motion are
+   theme-independent by construction, which is what keeps the two themes from
+   drifting into two different systems.
+
+   Applied on OS preference unless light is explicitly pinned.
+   ============================================================================= */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --lg-canvas: #141413;
+    --lg-surface: #1c1c1a;
+    --lg-well: #0e0e0d; /* still darker than the canvas */
+    --lg-hover: #262623;
+    --lg-active: #2f2f2b;
+    --lg-overlay: rgba(8, 8, 7, 0.66);
+
+    --lg-rule: #2f2f2b;
+    --lg-rule-strong: #43433e;
+    --lg-rule-ink: #e8e8e4; /* the ink rule inverts to paper */
+
+    --lg-text: #f0f0ec;
+    --lg-text-secondary: #b4b4ad;
+    --lg-text-muted: #8b8b84;
+    --lg-text-faint: #66665f;
+
+    /* Here the two accent roles must diverge: the label needs a light blue, the
+       fill needs a mid blue that white can sit on. */
+    --lg-accent: #8fabff;
+    --lg-accent-solid: #eaeae5;
+    --lg-accent-hover: #d5d5d0;
+    --lg-accent-active: #c2c2bd;
+    --lg-accent-subtle: rgba(143, 171, 255, 0.13);
+    --lg-accent-rule: rgba(143, 171, 255, 0.36);
+    --lg-on-accent: #131312;
+
+    --lg-satisfied: #3fcf95;
+    --lg-satisfied-solid: #0f7a50;
+    --lg-satisfied-subtle: rgba(63, 207, 149, 0.12);
+    --lg-satisfied-rule: rgba(63, 207, 149, 0.32);
+    --lg-on-satisfied: #ffffff;
+
+    /* Same red as danger, at the same values. The verdict and the failure are
+       told apart by weight rather than hue — a tinted chip against a bordered
+       alert panel — which is what frees ink for the primary action. */
+    --lg-unsatisfied: #f08a80;
+    --lg-unsatisfied-solid: #a8231b;
+    --lg-unsatisfied-subtle: rgba(240, 138, 128, 0.13);
+    --lg-unsatisfied-rule: rgba(240, 138, 128, 0.32);
+    --lg-on-unsatisfied: #ffffff;
+
+    /* Ink glyphs — the dark theme fills the box near-white. See the note in
+       the light block above. */
+    --lg-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3l2.3 2.3 4.9-5' fill='none' stroke='%23131312' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    --lg-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 6h6' fill='none' stroke='%23131312' stroke-width='1.9' stroke-linecap='round'/%3E%3C/svg%3E");
+
+    --lg-danger: #f08a80;
+    --lg-danger-solid: #a8231b;
+    --lg-danger-hover: #bd2a21;
+    --lg-danger-subtle: rgba(240, 138, 128, 0.13);
+    --lg-danger-rule: rgba(240, 138, 128, 0.32);
+    --lg-on-danger: #ffffff;
+
+    --lg-neutral: #8f8f88;
+    --lg-neutral-solid: #6d6d67;
+    --lg-neutral-subtle: rgba(143, 143, 136, 0.12);
+    --lg-neutral-rule: #43433e;
+
+    --lg-warning: #e0a83c;
+    --lg-warning-solid: #8a5c00;
+    --lg-warning-subtle: rgba(224, 168, 60, 0.13);
+    --lg-warning-rule: rgba(224, 168, 60, 0.32);
+    --lg-on-warning: #ffffff;
+
+    --lg-role-fill: #2f2f2b;
+    --lg-role-rule: #43433e;
+    --lg-role-text: #b4b4ad;
+
+    --lg-archived: #66665f;
+    --lg-archived-rule: #43433e;
+
+    --lg-selection: rgba(143, 171, 255, 0.24);
+    /* The fill blue is only 2.4:1 on this canvas, which fails WCAG 1.4.11 for a
+       focus indicator. The label blue clears 8:1, so the ring uses that. */
+    --lg-focus-color: #8fabff;
+
+    --lg-shadow-pop: 0 1px 0 rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* Explicit dark — must beat the media query above in both directions. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --lg-canvas: #141413;
+  --lg-surface: #1c1c1a;
+  --lg-well: #0e0e0d;
+  --lg-hover: #262623;
+  --lg-active: #2f2f2b;
+  --lg-overlay: rgba(8, 8, 7, 0.66);
+
+  --lg-rule: #2f2f2b;
+  --lg-rule-strong: #43433e;
+  --lg-rule-ink: #e8e8e4;
+
+  --lg-text: #f0f0ec;
+  --lg-text-secondary: #b4b4ad;
+  --lg-text-muted: #8b8b84;
+  --lg-text-faint: #66665f;
+
+  --lg-accent: #8fabff;
+  --lg-accent-solid: #eaeae5;
+  --lg-accent-hover: #d5d5d0;
+  --lg-accent-active: #c2c2bd;
+  --lg-accent-subtle: rgba(143, 171, 255, 0.13);
+  --lg-accent-rule: rgba(143, 171, 255, 0.36);
+  --lg-on-accent: #131312;
+
+  --lg-satisfied: #3fcf95;
+  --lg-satisfied-solid: #0f7a50;
+  --lg-satisfied-subtle: rgba(63, 207, 149, 0.12);
+  --lg-satisfied-rule: rgba(63, 207, 149, 0.32);
+  --lg-on-satisfied: #ffffff;
+
+  --lg-unsatisfied: #f08a80;
+  --lg-unsatisfied-solid: #a8231b;
+  --lg-unsatisfied-subtle: rgba(240, 138, 128, 0.13);
+  --lg-unsatisfied-rule: rgba(240, 138, 128, 0.32);
+  --lg-on-unsatisfied: #ffffff;
+
+  /* Ink glyphs — the dark theme fills the box near-white. See the note in
+     the light block above. */
+  --lg-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3l2.3 2.3 4.9-5' fill='none' stroke='%23131312' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --lg-icon-dash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 6h6' fill='none' stroke='%23131312' stroke-width='1.9' stroke-linecap='round'/%3E%3C/svg%3E");
+
+  --lg-danger: #f08a80;
+  --lg-danger-solid: #a8231b;
+  --lg-danger-hover: #bd2a21;
+  --lg-danger-subtle: rgba(240, 138, 128, 0.13);
+  --lg-danger-rule: rgba(240, 138, 128, 0.32);
+  --lg-on-danger: #ffffff;
+
+  --lg-neutral: #8f8f88;
+  --lg-neutral-solid: #6d6d67;
+  --lg-neutral-subtle: rgba(143, 143, 136, 0.12);
+  --lg-neutral-rule: #43433e;
+
+  --lg-warning: #e0a83c;
+  --lg-warning-solid: #8a5c00;
+  --lg-warning-subtle: rgba(224, 168, 60, 0.13);
+  --lg-warning-rule: rgba(224, 168, 60, 0.32);
+  --lg-on-warning: #ffffff;
+
+  --lg-role-fill: #2f2f2b;
+  --lg-role-rule: #43433e;
+  --lg-role-text: #b4b4ad;
+
+  --lg-archived: #66665f;
+  --lg-archived-rule: #43433e;
+
+  --lg-selection: rgba(143, 171, 255, 0.24);
+  --lg-focus-color: #8fabff;
+
+  --lg-shadow-pop: 0 1px 0 rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+/* -----------------------------------------------------------------------------
+   Reduced motion. Interaction durations collapse; the indicator duration only
+   slows. See the note on `--lg-dur-indicator` above — this is a correctness
+   choice, not a styling one.
+   ----------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --lg-dur-1: 0ms;
+    --lg-dur-2: 0ms;
+    --lg-dur-3: 0ms;
+    --lg-dur-indicator: 2600ms;
+  }
+}

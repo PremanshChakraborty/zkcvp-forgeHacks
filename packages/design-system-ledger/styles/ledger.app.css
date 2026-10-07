@@ -1,0 +1,12 @@
+/* =============================================================================
+   ZKCVP · Ledger — application entry point.
+
+   Identical to `ledger.css` minus `fonts.css`. The app loads Geist through
+   next/font, which self-hosts the files and emits a preload link; the @import
+   in fonts.css exists only so `previews/*.html` render the real typeface with
+   no build step, and it must not ship. See "Fonts" in ../README.md.
+
+     import "@zkcvp/design-system-ledger/styles/ledger.app.css";
+   ============================================================================= */
+
+@import "./_layers.css";

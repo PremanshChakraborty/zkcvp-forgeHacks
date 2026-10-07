@@ -1,0 +1,512 @@
+<!-- @dsCard group="Ledger / Foundations" -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ZKCVP Ledger · Foundations</title>
+    <link rel="stylesheet" href="../styles/ledger.css" />
+    <link rel="stylesheet" href="./preview.css" />
+  </head>
+  <body>
+    <div class="pv-page">
+      <header class="pv-head">
+        <div>
+          <div class="pv-head__title">Foundations</div>
+          <p class="pv-head__sub">
+            Colour, type, space, shape, rules and motion. Every swatch below reads the live
+            custom property, so nothing on this page can drift from tokens.css.
+          </p>
+        </div>
+        <div class="pv-controls">
+          <div class="pv-switch">
+            <span class="pv-switch__label">Theme</span>
+            <div class="pv-switch__row">
+              <button type="button" data-mode="system">OS</button>
+              <button type="button" data-mode="light">Light</button>
+              <button type="button" data-mode="dark">Dark</button>
+            </div>
+          </div>
+          <div class="pv-switch">
+            <span class="pv-switch__label">Density</span>
+            <div class="pv-switch__row">
+              <button type="button" data-density-mode="comfortable">Comfortable</button>
+              <button type="button" data-density-mode="compact">Compact</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="pv-nav" aria-label="Specimen pages">
+        <a href="./index.html">Overview</a>
+        <a href="./foundations.html" aria-current="page">Foundations</a>
+        <a href="./components.html">Components</a>
+        <a href="./domain.html">Domain</a>
+      </nav>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Colour</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Surfaces</b><span>--lg-canvas · --lg-surface · --lg-well</span>
+          </div>
+          <p class="pv-spec__note">
+            Two surfaces and a well, rather than a four-step ramp. The well is deliberately
+            darker than the canvas in both themes: cards sit above the page and hold chrome,
+            wells are cut into it and hold evidence. Keeping those opposed is what makes
+            "this is data the system actually read" legible.
+          </p>
+          <div class="pv-swatches">
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-canvas)"></div>
+              <code class="pv-swatch__name">--lg-canvas</code>
+              <span class="pv-swatch__role">the page</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-surface)"></div>
+              <code class="pv-swatch__name">--lg-surface</code>
+              <span class="pv-swatch__role">cards, panels, bars</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-well)"></div>
+              <code class="pv-swatch__name">--lg-well</code>
+              <span class="pv-swatch__role">evidence, digests, commit lists</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-hover)"></div>
+              <code class="pv-swatch__name">--lg-hover</code>
+              <span class="pv-swatch__role">row and control hover</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Accent</b><span>--lg-accent · --lg-accent-solid</span>
+          </div>
+          <p class="pv-spec__note">
+            Ink blue, and interactive affordances only: actions, links, focus, active nav. It
+            sits outside the verdict family so it can never be mistaken for a result. In
+            light mode both tokens hold the same value, because this blue clears 7.6:1 as
+            text on paper and as a fill under white text. Only dark mode has to split them.
+          </p>
+          <div class="pv-swatches">
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-accent)"></div>
+              <code class="pv-swatch__name">--lg-accent</code>
+              <span class="pv-swatch__role">text, icons, links</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-accent-solid)"></div>
+              <code class="pv-swatch__name">--lg-accent-solid</code>
+              <span class="pv-swatch__role">filled backgrounds</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-accent-subtle)"></div>
+              <code class="pv-swatch__name">--lg-accent-subtle</code>
+              <span class="pv-swatch__role">selected row, info alert</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-accent-rule)"></div>
+              <code class="pv-swatch__name">--lg-accent-rule</code>
+              <span class="pv-swatch__role">hairline on tinted surfaces</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Verdict family</b
+            ><span>--lg-satisfied · --lg-unsatisfied · --lg-danger · --lg-neutral</span>
+          </div>
+          <p class="pv-spec__note">
+            Four meanings that must never share a hue, plus an attention colour that is not a
+            verdict and an archived tone that is orthogonal to all of them. The negative
+            verdict is rendered in ink rather than given a colour: it cannot then sit near the
+            red reserved for things that actually broke, it survives greyscale, and it is
+            honest about weight.
+          </p>
+          <div class="pv-swatches">
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-satisfied)"></div>
+              <code class="pv-swatch__name">--lg-satisfied</code>
+              <span class="pv-swatch__role">verified, satisfied</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-unsatisfied)"></div>
+              <code class="pv-swatch__name">--lg-unsatisfied</code>
+              <span class="pv-swatch__role">eval_failed, not_satisfied</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-danger)"></div>
+              <code class="pv-swatch__name">--lg-danger</code>
+              <span class="pv-swatch__role">rate limit, crash, blown ceiling</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-neutral)"></div>
+              <code class="pv-swatch__name">--lg-neutral</code>
+              <span class="pv-swatch__role">new, never evaluated</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-warning)"></div>
+              <code class="pv-swatch__name">--lg-warning</code>
+              <span class="pv-swatch__role">approaching a limit, never a result</span>
+            </div>
+            <div>
+              <div class="pv-swatch__chip" style="background: var(--lg-archived)"></div>
+              <code class="pv-swatch__name">--lg-archived</code>
+              <span class="pv-swatch__role">archived, orthogonal to status</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Text tones</b><span>--lg-text-*</span></div>
+          <p class="pv-spec__note">
+            Secondary clears 6.6:1 and muted clears 4.6:1, so both carry information. Faint
+            is under 3:1 by design and is for non-essential content only: disabled labels and
+            decorative counters, never a fact the reader needs.
+          </p>
+          <div class="pv-stage--block">
+            <p style="color: var(--lg-text)">
+              Primary. Independent machine attestation over real source at pinned commits.
+            </p>
+            <p class="lg-text-secondary">
+              Secondary. The record's integrity is separable from the judgment's correctness.
+            </p>
+            <p class="lg-text-muted">Muted. Help text, captions, table headers, metadata.</p>
+            <p class="lg-text-faint">Faint. Disabled labels only.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Type</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Scale</b><span>Geist · --lg-text-50 … --lg-text-800</span>
+          </div>
+          <p class="pv-spec__note">
+            Numeric, so "is 400 bigger than 300" is never a question, and in rem, so a reader
+            who raises their browser's base font size gets a system that grows with them. 300
+            is the default UI size. 400 is the reading size and appears only where there are
+            real sentences, meaning evaluator rationales and requirement descriptions.
+          </p>
+          <div class="pv-stage--block">
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">800 · 36 / 40</code>
+              <span
+                class="pv-typerow__sample"
+                style="
+                  font-size: var(--lg-text-800);
+                  line-height: var(--lg-text-800-lh);
+                  font-weight: 600;
+                  letter-spacing: var(--lg-tracking-display);
+                "
+                >Not satisfied</span
+              >
+              <code class="pv-typerow__meta">display</code>
+            </div>
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">700 · 28 / 34</code>
+              <span
+                class="pv-typerow__sample"
+                style="
+                  font-size: var(--lg-text-700);
+                  line-height: var(--lg-text-700-lh);
+                  font-weight: 600;
+                  letter-spacing: var(--lg-tracking-display);
+                "
+                >Claim 118</span
+              >
+              <code class="pv-typerow__meta">page title</code>
+            </div>
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">600 · 21 / 28</code>
+              <span
+                class="pv-typerow__sample"
+                style="
+                  font-size: var(--lg-text-600);
+                  line-height: var(--lg-text-600-lh);
+                  font-weight: 600;
+                "
+                >Evaluation history</span
+              >
+              <code class="pv-typerow__meta">section heading</code>
+            </div>
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">500 · 17 / 26</code>
+              <span
+                class="pv-typerow__sample"
+                style="
+                  font-size: var(--lg-text-500);
+                  line-height: var(--lg-text-500-lh);
+                  font-weight: 600;
+                "
+                >Rate limiting on the public API</span
+              >
+              <code class="pv-typerow__meta">card, verdict title</code>
+            </div>
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">400 · 15 / 24</code>
+              <span
+                class="pv-typerow__sample"
+                style="font-size: var(--lg-text-400); line-height: var(--lg-text-400-lh)"
+                >A token bucket limiter is applied to every public route.</span
+              >
+              <code class="pv-typerow__meta">prose</code>
+            </div>
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">300 · 14 / 22</code>
+              <span
+                class="pv-typerow__sample"
+                style="font-size: var(--lg-text-300); line-height: var(--lg-text-300-lh)"
+                >Default UI size. Labels, rows, buttons, inputs.</span
+              >
+              <code class="pv-typerow__meta">default UI</code>
+            </div>
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">200 · 13 / 20</code>
+              <span
+                class="pv-typerow__sample"
+                style="font-size: var(--lg-text-200); line-height: var(--lg-text-200-lh)"
+                >Compact body and metadata.</span
+              >
+              <code class="pv-typerow__meta">compact body</code>
+            </div>
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">100 · 12 / 18</code>
+              <span
+                class="pv-typerow__sample"
+                style="font-size: var(--lg-text-100); line-height: var(--lg-text-100-lh)"
+                >Captions and help text.</span
+              >
+              <code class="pv-typerow__meta">caption</code>
+            </div>
+            <div class="pv-typerow">
+              <code class="pv-typerow__meta">50 · 11 / 16</code>
+              <span class="pv-typerow__sample lg-micro-label">Pinned inputs</span>
+              <code class="pv-typerow__meta">micro-label</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Monospace</b><span>Geist Mono · tabular-nums</span>
+          </div>
+          <p class="pv-spec__note">
+            Every identifier a person might paste into a terminal, and every number. Tabular
+            figures are the document-wide default rather than an opt-in: comparing two
+            digests by eye only works when the glyphs line up in columns. The three rows
+            below are the same width.
+          </p>
+          <div class="pv-stage--block lg-mono" style="font-size: var(--lg-text-300)">
+            <div>0123456789</div>
+            <div>1111111111</div>
+            <div>0000000000</div>
+            <div style="margin-top: var(--lg-space-3); color: var(--lg-text-secondary)">
+              4f2c9ab · sha256:9f3ac1…7be204 · src/evaluator/graph.ts:118-146
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label"><b>Micro-label</b><span>.lg-micro-label</span></div>
+          <p class="pv-spec__note">
+            Uppercase, tracked, 11px, and wayfinding only: the label above a field group, a
+            column group or a definition term. It is not a decorative eyebrow above a section
+            heading. A heading that needs a label above it to be understood needs a better
+            heading, and there is at most one of these per surface.
+          </p>
+          <div class="lg-well">
+            <span class="lg-micro-label">Pinned inputs</span>
+            <div style="margin-top: var(--lg-space-2); font-size: var(--lg-text-300)">
+              kestrel-labs/attest-api at 4f2c9ab
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================== -->
+      <section class="pv-section">
+        <h2 class="pv-section__title">Space, shape and rules</h2>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Space scale</b><span>--lg-space-1 … --lg-space-8</span>
+          </div>
+          <p class="pv-spec__note">A 4px scale, in rem. 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64.</p>
+          <div class="pv-bars">
+            <span
+              ><span class="pv-bars__bar" style="width: var(--lg-space-1)"></span
+              ><code class="pv-bars__name">4</code></span
+            >
+            <span
+              ><span class="pv-bars__bar" style="width: var(--lg-space-2)"></span
+              ><code class="pv-bars__name">8</code></span
+            >
+            <span
+              ><span class="pv-bars__bar" style="width: var(--lg-space-3)"></span
+              ><code class="pv-bars__name">12</code></span
+            >
+            <span
+              ><span class="pv-bars__bar" style="width: var(--lg-space-4)"></span
+              ><code class="pv-bars__name">16</code></span
+            >
+            <span
+              ><span class="pv-bars__bar" style="width: var(--lg-space-5)"></span
+              ><code class="pv-bars__name">24</code></span
+            >
+            <span
+              ><span class="pv-bars__bar" style="width: var(--lg-space-6)"></span
+              ><code class="pv-bars__name">32</code></span
+            >
+            <span
+              ><span class="pv-bars__bar" style="width: var(--lg-space-7)"></span
+              ><code class="pv-bars__name">48</code></span
+            >
+            <span
+              ><span class="pv-bars__bar" style="width: var(--lg-space-8)"></span
+              ><code class="pv-bars__name">64</code></span
+            >
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Shape</b><span>--lg-radius · --lg-radius-pill</span>
+          </div>
+          <p class="pv-spec__note">
+            Square. The rule is that surfaces and controls have no radius and only chips and
+            avatars are round, so there is no middle radius to get wrong and no decision to
+            make per component. It is also what makes a shared-edge button group a one-line
+            negative margin.
+          </p>
+          <div class="pv-stage">
+            <span
+              style="
+                display: grid;
+                place-items: center;
+                width: 5rem;
+                height: 3rem;
+                background: var(--lg-surface);
+                border: 1px solid var(--lg-rule-strong);
+                font-size: var(--lg-text-100);
+              "
+              >surface</span
+            >
+            <span class="lg-chip lg-chip--accent">chip</span>
+            <div class="lg-btn-group">
+              <button class="lg-btn lg-btn--secondary lg-btn--sm" type="button">Commits</button>
+              <button class="lg-btn lg-btn--secondary lg-btn--sm" type="button">Branches</button>
+              <button class="lg-btn lg-btn--secondary lg-btn--sm" type="button">Tags</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Rules</b><span>--lg-rule · --lg-rule-strong · --lg-rule-ink</span>
+          </div>
+          <p class="pv-spec__note">
+            Three weights, three jobs. The ink rule is this direction's signature and appears
+            only under a page or section heading. It is typographic and carries no state: no
+            surface in this system gets a coloured edge or side tab to encode status, because
+            an accent band down one side of a card is the most recognisable
+            machine-generated tell in this class of interface.
+          </p>
+          <div class="pv-stage--block">
+            <div style="margin-bottom: var(--lg-space-4)">
+              <code class="lg-caption">--lg-rule</code>
+              <div style="border-top: 1px solid var(--lg-rule)"></div>
+            </div>
+            <div style="margin-bottom: var(--lg-space-4)">
+              <code class="lg-caption">--lg-rule-strong</code>
+              <div style="border-top: 1px solid var(--lg-rule-strong)"></div>
+            </div>
+            <div>
+              <code class="lg-caption">--lg-rule-ink</code>
+              <div style="border-top: 1px solid var(--lg-rule-ink)"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Density context</b><span>[data-density="compact"]</span>
+          </div>
+          <p class="pv-spec__note">
+            Density is a context attribute rather than a pair of fixed row tokens. The
+            comfortable values are the default and the compact context re-points the same
+            tokens, so a commit table can be dense inside a page that is not, and no
+            component needs to know which mode it is in. The switch in the header changes
+            every specimen on this page.
+          </p>
+          <div class="lg-scroll-x">
+            <table class="lg-table">
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th>Comfortable</th>
+                  <th>Compact</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="lg-table__cell--mono">--lg-row</td>
+                  <td>44px</td>
+                  <td>32px</td>
+                </tr>
+                <tr>
+                  <td class="lg-table__cell--mono">--lg-control-md</td>
+                  <td>34px</td>
+                  <td>30px</td>
+                </tr>
+                <tr>
+                  <td class="lg-table__cell--mono">--lg-text-base</td>
+                  <td>14px</td>
+                  <td>13px</td>
+                </tr>
+                <tr>
+                  <td class="lg-table__cell--mono">--lg-page-pad</td>
+                  <td>24px</td>
+                  <td>16px</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pv-spec">
+          <div class="pv-spec__label">
+            <b>Motion</b><span>--lg-dur-1/2/3 · --lg-dur-indicator</span>
+          </div>
+          <p class="pv-spec__note">
+            Interaction durations drop to zero under prefers-reduced-motion. The indicator
+            duration is separate and only slows, because freezing a spinner or an
+            indeterminate bar makes a request that is genuinely still running look hung, which
+            misinforms rather than accommodates. Purely decorative motion, meaning the
+            skeleton shimmer, stops outright.
+          </p>
+          <dl class="lg-dl">
+            <dt>--lg-dur-1</dt>
+            <dd>80ms, tone and colour on hover</dd>
+            <dt>--lg-dur-2</dt>
+            <dd>140ms, entering and leaving elements</dd>
+            <dt>--lg-dur-3</dt>
+            <dd>200ms, larger layout reveals</dd>
+            <dt>--lg-dur-indicator</dt>
+            <dd>1100ms, and 2600ms under reduced motion. Never zero.</dd>
+          </dl>
+        </div>
+      </section>
+    </div>
+
+    <script src="./_theme.js"></script>
+  </body>
+</html>

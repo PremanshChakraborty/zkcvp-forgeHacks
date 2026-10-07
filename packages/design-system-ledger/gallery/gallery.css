@@ -1,0 +1,234 @@
+/* =============================================================================
+   Gallery harness chrome.
+
+   Everything here is prefixed `gx-` and is NOT part of the design system.
+   Nothing in this file should be copied into the app. It exists to lay out
+   specimens, label them, and switch theme and density — the specimens
+   themselves use only `lg-` classes and real components.
+   ============================================================================= */
+
+.gx-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.gx-bar {
+  position: sticky;
+  top: 0;
+  z-index: var(--lg-z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-4);
+  flex-wrap: wrap;
+  padding: var(--lg-space-3) var(--lg-page-pad);
+  background: var(--lg-surface);
+  border-bottom: 1px solid var(--lg-rule);
+}
+
+.gx-bar__mark {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lg-space-2);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-tight);
+}
+
+.gx-bar__mark span {
+  font-size: var(--lg-text-100);
+  font-weight: var(--lg-weight-regular);
+  color: var(--lg-text-muted);
+}
+
+.gx-bar__controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-4);
+}
+
+.gx-bar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--lg-space-2);
+}
+
+.gx-bar__group > .lg-micro-label {
+  display: inline;
+}
+
+.gx-main {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.gx-body {
+  flex: 1;
+  min-width: 0;
+  padding: var(--lg-space-6) var(--lg-page-pad) var(--lg-space-8);
+  max-width: var(--lg-container);
+}
+
+/* A labelled specimen. The label is metadata about the specimen, not part of
+   it, so it sits outside the frame in mono at the smallest size. */
+.gx-spec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-3);
+  padding-block: var(--lg-space-5);
+  border-top: 1px solid var(--lg-rule);
+}
+
+.gx-spec:first-of-type {
+  border-top: 0;
+  padding-top: var(--lg-space-3);
+}
+
+.gx-spec__label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lg-space-2);
+  flex-wrap: wrap;
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-100);
+  color: var(--lg-text-muted);
+}
+
+.gx-spec__label b {
+  font-weight: var(--lg-weight-medium);
+  color: var(--lg-text);
+}
+
+.gx-spec__note {
+  font-family: var(--lg-font-sans);
+  font-size: var(--lg-text-200);
+  line-height: var(--lg-text-200-lh);
+  color: var(--lg-text-muted);
+  max-width: 74ch;
+}
+
+.gx-spec__stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lg-space-3);
+}
+
+.gx-spec__stage--block {
+  display: block;
+}
+
+.gx-spec__stage--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--lg-space-4);
+}
+
+/* Colour and token specimens */
+.gx-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--lg-space-3);
+  width: 100%;
+}
+
+.gx-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-2);
+}
+
+.gx-swatch__chip {
+  height: 3rem;
+  border: 1px solid var(--lg-rule);
+}
+
+.gx-swatch__name {
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  color: var(--lg-text-secondary);
+  word-break: break-all;
+}
+
+.gx-swatch__role {
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-text-muted);
+}
+
+.gx-typerow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lg-space-4);
+  padding-block: var(--lg-space-2);
+  border-bottom: 1px solid var(--lg-rule);
+  width: 100%;
+}
+
+.gx-typerow:last-child {
+  border-bottom: 0;
+}
+
+.gx-typerow__meta {
+  flex: none;
+  width: 9rem;
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  color: var(--lg-text-muted);
+}
+
+.gx-typerow__sample {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gx-scalebar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--lg-space-3);
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.gx-scalebar__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lg-space-1);
+  align-items: flex-start;
+}
+
+.gx-scalebar__bar {
+  background: var(--lg-accent-subtle);
+  border: 1px solid var(--lg-accent-rule);
+  height: 1.5rem;
+}
+
+.gx-scalebar__name {
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  color: var(--lg-text-muted);
+}
+
+/* Two-column comparison, for showing a rule and its counter-example. */
+.gx-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--lg-space-4);
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .gx-pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .gx-typerow {
+    flex-direction: column;
+    gap: var(--lg-space-1);
+  }
+  .gx-typerow__meta {
+    width: auto;
+  }
+}
