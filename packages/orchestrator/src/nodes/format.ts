@@ -4,8 +4,9 @@
  * 🤖 LLM: NO
  * 📡 GitHub API: NO
  *
- * Produces the two structurally separate output artifacts and runs the
- * code-in-rationale guardrail (Layer 3). Nothing here can fail: by the time a
+ * Produces the two structurally separate output artifacts and runs the two
+ * deterministic rationale guardrails: no source code (Layer 3), and no
+ * citation of a file the run never read. Nothing here can fail: by the time a
  * run reaches FORMAT the verdicts have already been checked against the
  * requirement set, so this node packages what it is given.
  */
@@ -14,10 +15,17 @@ import type { EvidenceBundle, Report, RunTrace } from "@zkcvp/contracts";
 
 import { runContext } from "../context";
 import { containsCode } from "../guardrails/code-detector";
+import { ungroundedCitations } from "../guardrails/grounding";
 import { addUsage } from "../llm";
 import type { EvaluatorState, EvaluatorUpdate } from "../state";
 
-export const PROMPT_TEMPLATE_VERSION = "v2";
+/**
+ * v3: repo content fenced as untrusted with a per-prompt nonce, judging rules
+ * in the system message, truncation stated in block headers with continuation
+ * reads, and the grounding rule. Bump on any prompt change so a stored verdict
+ * stays tied to the prompt that produced it.
+ */
+export const PROMPT_TEMPLATE_VERSION = "v3";
 
 export type FormatResult = {
   evidence: EvidenceBundle;
@@ -40,6 +48,28 @@ export function buildArtifacts(
         ...v,
         rationale:
           "[Rationale redacted — contained source code. " +
+          "The requirement was evaluated as: " +
+          v.verdict +
+          "]",
+      };
+    }
+
+    // Backstop for the grounding repair ANALYZE already asked for once. Same
+    // policy as the code guardrail, for the same reason: the verdict stands,
+    // and a rationale we know to be wrong is replaced whole rather than
+    // edited. The offending citations go to the trace, not the report — the
+    // report would otherwise repeat the very claim being withheld.
+    const ungrounded = ungroundedCitations(v.rationale, state.trees, Object.keys(state.gatheredFiles));
+    if (ungrounded.length > 0) {
+      redactions.push({
+        requirementVersionId: v.requirementVersionId,
+        reason: "ungrounded_citation",
+        detail: ungrounded.map((u) => `${u.citation} (${u.reason})`).join(", "),
+      });
+      return {
+        ...v,
+        rationale:
+          "[Rationale withheld — it referred to files the evaluator did not read. " +
           "The requirement was evaluated as: " +
           v.verdict +
           "]",

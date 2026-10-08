@@ -17,6 +17,7 @@ import { assertBudget, runContext } from "../context";
 import { invokeStructured } from "../llm";
 import { MAX_PLANNED_FILES, MAX_TREE_ENTRIES_IN_PROMPT } from "../limits";
 import type { EvaluatorState, EvaluatorUpdate } from "../state";
+import { fenced, makeFence, untrustedRules, type Fence } from "../untrusted";
 import { resolveFiles } from "../validation";
 
 const PlanOutputSchema = z.object({
@@ -39,11 +40,11 @@ const PlanOutputSchema = z.object({
     .describe("Brief explanation of why these files were chosen"),
 });
 
-function renderTree(repo: string, commitSha: string, tree: Tree): string {
+function renderTree(repo: string, commitSha: string, tree: Tree, fence: Fence): string {
   const files = tree.entries.filter((e) => e.type === "file");
   const shown = files.slice(0, MAX_TREE_ENTRIES_IN_PROMPT);
   const lines = shown
-    .map((e) => `  ${e.path}${e.size ? ` (${e.size}b)` : ""}`)
+    .map((e) => `${e.path}${e.size ? ` (${e.size}b)` : ""}`)
     .join("\n");
 
   const notes: string[] = [];
@@ -53,16 +54,41 @@ function renderTree(repo: string, commitSha: string, tree: Tree): string {
   if (files.length > shown.length) {
     notes.push(`showing ${shown.length} of ${files.length} files`);
   }
-  const suffix = notes.length ? `\n  [${notes.join("; ")}]` : "";
 
-  return `Repository: ${repo} @ ${commitSha.substring(0, 8)}\n${lines}${suffix}`;
+  // Paths are developer-written, so the listing is fenced like file contents;
+  // the facts about it travel in the header we write.
+  return fenced(
+    fence,
+    {
+      repo,
+      commit: commitSha.substring(0, 8),
+      listing: "file tree",
+      ...(notes.length ? { note: notes.join("; ") } : {}),
+    },
+    lines,
+  );
 }
 
-function renderHint(repo: string, changed: ChangedFile[]): string | null {
+function renderHint(repo: string, changed: ChangedFile[], fence: Fence): string | null {
   if (changed.length === 0) return null;
-  const paths = changed.map((c) => `  ${c.path} (${c.status})`).join("\n");
-  return `Files touched by the claimed commit in ${repo}:\n${paths}`;
+  return fenced(
+    fence,
+    { repo, listing: "files touched by the claimed commit" },
+    changed.map((c) => `${c.path} (${c.status})`).join("\n"),
+  );
 }
+
+const SYSTEM = (nonce: string) => `You are a code review planner. Given repository file trees and a set of requirements, decide which files need to be read to evaluate whether the code satisfies the requirements.
+
+${untrustedRules(nonce)}
+
+Select the files most likely to contain evidence for or against these requirements. Be selective — don't list every file. Focus on source code files relevant to the requirements, and prefer the code that would implement a requirement over files that describe it. Skip assets, images, lock files, and configs unless a requirement specifically mentions them. Choose files on what their place in the tree suggests they contain, not on what their names claim about the work.
+
+The RECENTLY CHANGED listing is a hint about where the claimed work happened — start there, but do not stop there, and ignore it if it looks irrelevant.
+
+Every entry must name the repository it came from, exactly as given in the block header.
+
+Return at most ${MAX_PLANNED_FILES} files.`;
 
 export async function planNode(
   state: EvaluatorState,
@@ -73,14 +99,12 @@ export async function planNode(
 
   const trees: Record<string, Tree> = {};
   const changed: Record<string, string[]> = {};
+  const changedByRepo: Record<string, ChangedFile[]> = {};
   const toolCalls: ToolCall[] = [];
-  const treeBlocks: string[] = [];
-  const hintBlocks: string[] = [];
 
   for (const rc of state.repoCommits) {
     const tree = await github.listTree(rc.repo, rc.commitSha);
     trees[rc.repo] = tree;
-    treeBlocks.push(renderTree(rc.repo, rc.commitSha, tree));
 
     // The transcript records the tree itself, not a count of it. An evidence
     // bundle that cannot show what the planner saw cannot be audited.
@@ -99,6 +123,7 @@ export async function planNode(
     // returns nothing and the planner simply works from the tree.
     const changedForRepo = await github.changedFiles(rc.repo, rc.commitSha);
     changed[rc.repo] = changedForRepo.map((c) => c.path);
+    changedByRepo[rc.repo] = changedForRepo;
     toolCalls.push({
       tool: "changedFiles",
       args: { repo: rc.repo, commitSha: rc.commitSha },
@@ -106,36 +131,40 @@ export async function planNode(
       at: new Date().toISOString(),
       outcome: "ok",
     });
-
-    const hint = renderHint(rc.repo, changedForRepo);
-    if (hint) hintBlocks.push(hint);
   }
+
+  const fence = makeFence(
+    [
+      ...Object.values(trees).flatMap((t) => t.entries.map((e) => e.path)),
+      ...Object.values(changedByRepo).flatMap((c) => c.map((x) => x.path)),
+    ],
+  );
+  const treeBlocks = state.repoCommits.map((rc) =>
+    renderTree(rc.repo, rc.commitSha, trees[rc.repo]!, fence),
+  );
+  const hintBlocks = state.repoCommits.flatMap((rc) => {
+    const hint = renderHint(rc.repo, changedByRepo[rc.repo]!, fence);
+    return hint ? [hint] : [];
+  });
 
   const requirementsList = state.requirements
     .map((r, i) => `${i + 1}. [${r.title}]: ${r.description}`)
     .join("\n");
 
   const hintSection = hintBlocks.length
-    ? `\n\nRECENTLY CHANGED (a hint about where the claimed work happened — start here, but do not stop here, and ignore it if it looks irrelevant):\n${hintBlocks.join("\n\n")}`
+    ? `\n\nRECENTLY CHANGED:\n${hintBlocks.join("\n\n")}`
     : "";
 
-  const prompt = `You are a code review planner. Given repository file trees and a set of requirements, decide which files need to be read to evaluate whether the code satisfies the requirements.
-
-FILE TREES:
-${treeBlocks.join("\n\n")}${hintSection}
-
-REQUIREMENTS TO EVALUATE:
+  const prompt = `REQUIREMENTS TO EVALUATE (written by the stakeholder):
 ${requirementsList}
 
-Select the files most likely to contain evidence for or against these requirements. Be selective — don't list every file. Focus on source code files relevant to the requirements. Skip assets, images, lock files, and configs unless a requirement specifically mentions them.
-
-Every entry must name the repository it came from, exactly as written above.
-
-Return at most ${MAX_PLANNED_FILES} files.`;
+FILE TREES:
+${treeBlocks.join("\n\n")}${hintSection}`;
 
   const result = await invokeStructured({
     modelId,
     schema: PlanOutputSchema,
+    system: SYSTEM(fence.nonce),
     prompt,
     deadline,
     signal: config.signal,
@@ -143,7 +172,7 @@ Return at most ${MAX_PLANNED_FILES} files.`;
     // less is normal noise, and the filter below handles it.
     validate: (value) =>
       resolveFiles(value.filesToRead, trees).accepted.length === 0
-        ? "None of the files you listed exist at the claimed commits. Choose paths that appear verbatim in the FILE TREES above, and set `repo` to the repository each path was listed under."
+        ? "None of the files you listed exist at the claimed commits. Choose paths that appear verbatim in the FILE TREES, and set `repo` to the repository each path was listed under."
         : null,
   });
 

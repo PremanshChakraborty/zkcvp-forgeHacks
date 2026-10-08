@@ -18,23 +18,30 @@ import { EvaluationError, isGitHubReadError } from "@zkcvp/contracts";
 import { assertBudget, runContext } from "../context";
 import { MAX_FILE_CHARS } from "../limits";
 import {
-  fileKey,
+  windowKey,
   type EvaluatorState,
   type EvaluatorUpdate,
   type GatheredFile,
   type PlannedFile,
 } from "../state";
 
-function truncate(content: string): {
-  content: string;
-  status: "ok" | "truncated";
-} {
-  if (content.length <= MAX_FILE_CHARS) return { content, status: "ok" };
+/**
+ * One window of a file.
+ *
+ * The content is the slice and nothing else. Whether it was truncated is
+ * reported in `status` and rendered in the fence header by ANALYZE — a marker
+ * appended inside the content would be indistinguishable from the same words
+ * written by the developer, who could then claim a file was cut off, or hide
+ * that one was.
+ */
+export function readWindow(
+  raw: string,
+  offset: number,
+): { content: string; status: "ok" | "truncated" } {
+  const end = offset + MAX_FILE_CHARS;
   return {
-    content:
-      content.substring(0, MAX_FILE_CHARS) +
-      "\n\n[TRUNCATED — file exceeds size limit]",
-    status: "truncated",
+    content: raw.substring(offset, end),
+    status: raw.length > end ? "truncated" : "ok",
   };
 }
 
@@ -64,19 +71,27 @@ export async function gatherNode(
   const unresolved: Unresolved[] = [];
 
   for (const file of filesToRead) {
-    const key = fileKey(file);
+    const key = windowKey(file);
+    const offset = file.offset ?? 0;
     if (state.gatheredFiles[key] || gathered[key]) continue;
 
     const commitSha = shaByRepo.get(file.repo);
     if (!commitSha) continue; // resolveFiles already rejects unknown repos
 
     assertBudget(deadline);
-    const args = { repo: file.repo, commitSha, path: file.path };
+    const args = { repo: file.repo, commitSha, path: file.path, ...(offset ? { offset } : {}) };
 
     try {
       const raw = await github.readFile(file.repo, commitSha, file.path);
-      const { content, status } = truncate(raw);
-      gathered[key] = { repo: file.repo, path: file.path, content, status };
+      const { content, status } = readWindow(raw, offset);
+      gathered[key] = {
+        repo: file.repo,
+        path: file.path,
+        content,
+        status,
+        offset,
+        totalChars: raw.length,
+      };
       toolCalls.push({
         tool: "readFile",
         args,
@@ -115,6 +130,7 @@ export async function gatherNode(
           path: file.path,
           content: marker,
           status: err.kind === "not_found" ? "not_found" : "too_large",
+          offset,
         };
         toolCalls.push({
           tool: "readFile",
