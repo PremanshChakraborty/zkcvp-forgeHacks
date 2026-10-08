@@ -12,6 +12,7 @@
     "build": "npm run build -w @zkcvp/web",
     "test": "vitest run",
     "typecheck": "npm run typecheck --workspaces --if-present",
+    "eval": "tsx --env-file=packages/orchestrator/.env packages/orchestrator/evals/run.ts",
     "verify": "npm run typecheck && npm run test && npm run check -w @zkcvp/design-system-ledger",
     "postinstall": "patch-package"
   },

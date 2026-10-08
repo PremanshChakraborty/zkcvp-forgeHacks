@@ -3,6 +3,7 @@ import type {
   EvidenceBundle,
   RepoCommit,
   Report,
+  RunTrace,
   ToolCall,
   Tree,
   Verdict,
@@ -128,6 +129,25 @@ export const EvaluatorAnnotation = Annotation.Root({
   iterationCount: Annotation<number>({
     reducer: (_a, b) => b,
     default: () => 0,
+  }),
+  /** Why ANALYZE let the loop end. Set on the round that ends it. */
+  stopReason: Annotation<RunTrace["stopReason"] | null>({
+    reducer: (_a, b) => b,
+    default: () => null,
+  }),
+
+  // ── Trace, appended by each node; assembled into the evidence by FORMAT ──
+  traceNodes: Annotation<RunTrace["nodes"]>({
+    reducer: (a, b) => [...a, ...b],
+    default: () => [],
+  }),
+  traceModelCalls: Annotation<RunTrace["modelCalls"]>({
+    reducer: (a, b) => [...a, ...b],
+    default: () => [],
+  }),
+  filesReadPerRound: Annotation<string[][]>({
+    reducer: (a, b) => [...a, ...b],
+    default: () => [],
   }),
 
   // ── Terminal, written only by FORMAT ──

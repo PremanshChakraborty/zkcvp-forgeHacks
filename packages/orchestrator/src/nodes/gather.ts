@@ -167,5 +167,6 @@ export async function gatherNode(
     toolCallLog: toolCalls,
     gatheredFiles: gathered,
     iterationCount: state.iterationCount + 1,
+    filesReadPerRound: [Object.keys(gathered)],
   };
 }
