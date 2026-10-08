@@ -69,8 +69,18 @@ const BUDGET_SECONDS = Number(process.env.EVAL_CEILING_SECONDS ?? 300);
 const DELAY_MS = Number(arg("delay-ms") ?? 4000);
 const REPEAT = Number(arg("repeat") ?? 1);
 /** Whole-case retries when the provider was the problem, not the case. */
-const QUOTA_RETRIES = 2;
+const QUOTA_RETRIES = 4;
 const QUOTA_BACKOFF_MS = 45_000;
+/** Longer than this and the quota is a daily one: stop rather than wait. */
+const MAX_QUOTA_WAIT_MS = 5 * 60_000;
+
+/** "Please retry in 6h23m7.8s" / "retry in 27.8s" → ms, or null if absent. */
+function retryDelayMs(message: string): number | null {
+  const m = /retry in ((?:\d+h)?(?:\d+m)?(?:[\d.]+s)?)/i.exec(message);
+  if (!m?.[1]) return null;
+  const part = (unit: string) => Number(new RegExp(`([\\d.]+)${unit}`).exec(m[1]!)?.[1] ?? 0);
+  return Math.round((part("h") * 3600 + part("m") * 60 + part("s")) * 1000);
+}
 
 class QuotaExhausted extends Error {}
 
@@ -135,17 +145,24 @@ async function runCase(c: EvalCase, repetition: number): Promise<CaseResult> {
     } catch (err) {
       const kind = err instanceof EvaluationError ? err.kind : "crash";
       const message = err instanceof Error ? err.message : String(err);
-      // A daily quota resets in hours, not seconds. Recording every remaining
-      // case as an error would produce a results file that looks like a run
-      // and measures nothing, so the whole run stops instead.
-      if (kind === "model_unavailable" && /free_tier_requests|PerDay|retry in \d+h/i.test(message)) {
-        throw new QuotaExhausted(message);
-      }
       const quota =
         kind === "model_unavailable" && /429|quota|rate|exhausted|503|overloaded/i.test(message);
+      const metric = /Quota exceeded for metric: ([^,]+), limit: (\d+)/.exec(message);
+      const retryIn = retryDelayMs(message);
+      // A quota that resets in hours cannot be waited out inside a run.
+      // Recording every remaining case as an error would produce a results
+      // file that looks like a run and measures nothing, so the run stops.
+      if (quota && retryIn !== null && retryIn > MAX_QUOTA_WAIT_MS) {
+        throw new QuotaExhausted(message);
+      }
       if (quota && attempts <= QUOTA_RETRIES) {
-        console.log(`   ⏳ provider pushback (${message.slice(0, 80)}…), waiting ${QUOTA_BACKOFF_MS / 1000}s`);
-        await sleep(QUOTA_BACKOFF_MS);
+        // The provider says how long; trust it over a fixed guess. Per-minute
+        // limits say tens of seconds.
+        const wait = retryIn !== null ? retryIn + 2_000 : QUOTA_BACKOFF_MS;
+        console.log(
+          `   ⏳ ${metric ? `${metric[1]} (limit ${metric[2]})` : message.slice(0, 80)} — waiting ${Math.round(wait / 1000)}s`,
+        );
+        await sleep(wait);
         continue;
       }
       return {
