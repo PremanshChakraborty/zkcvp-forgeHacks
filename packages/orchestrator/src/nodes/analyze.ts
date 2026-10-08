@@ -119,27 +119,43 @@ RULES:
     validate: (value) => verdictProblem(value.verdicts, state.requirements),
   });
 
+  const modelCall = {
+    node: "analyze" as const,
+    round: state.iterationCount,
+    attempts: result.attempts,
+    repairs: result.repairs,
+    usage: result.usage,
+  };
+
   if (forceDecision) {
     return {
-      verdicts: result.verdicts,
+      verdicts: result.value.verdicts,
       needsMoreEvidence: false,
       additionalFilesNeeded: [],
+      stopReason: "iteration_cap",
+      traceModelCalls: [modelCall],
     };
   }
 
   const alreadyRead = new Set(Object.keys(state.gatheredFiles));
-  const { accepted } = resolveFiles(result.additionalFilesNeeded, state.trees, {
+  const { accepted } = resolveFiles(result.value.additionalFilesNeeded, state.trees, {
     exclude: alreadyRead,
   });
 
   // Asking for more but naming nothing readable is not a reason to loop — the
   // next GATHER would be a no-op and the next ANALYZE would see the same
   // evidence, so the loop would spin until the cap with no new information.
-  const shouldLoop = result.needsMoreEvidence && accepted.length > 0;
+  const shouldLoop = result.value.needsMoreEvidence && accepted.length > 0;
 
   return {
-    verdicts: result.verdicts,
+    verdicts: result.value.verdicts,
     needsMoreEvidence: shouldLoop,
     additionalFilesNeeded: shouldLoop ? accepted : [],
+    stopReason: shouldLoop
+      ? null
+      : result.value.needsMoreEvidence
+        ? "no_readable_files"
+        : "sufficient",
+    traceModelCalls: [modelCall],
   };
 }

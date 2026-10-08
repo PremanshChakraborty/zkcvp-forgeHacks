@@ -102,6 +102,51 @@ export type EvidenceBundle = {
    * them silently would leave the transcript implying the agent never asked.
    */
   droppedPaths: string[];
+  /**
+   * What the run did, for explaining a verdict after the fact: timing, rounds,
+   * reads, model usage, guardrail interventions, and why the loop stopped.
+   *
+   * Lives here rather than in a tracing service so it is hashed with the rest
+   * of the evidence and needs no third party. Never contains source code.
+   * Optional only so bundles recorded before it existed still type-check.
+   */
+  trace?: RunTrace;
+};
+
+export type ModelUsage = {
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+};
+
+export type RunTrace = {
+  nodes: {
+    node: "plan" | "gather" | "analyze" | "format";
+    /** GATHER↔ANALYZE round the node ran in; 0 for PLAN. */
+    round: number;
+    startedAt: string;
+    durationMs: number;
+  }[];
+  modelCalls: {
+    node: "plan" | "analyze";
+    round: number;
+    /** Transport retries plus repair rounds; 1 means first try accepted. */
+    attempts: number;
+    /** Each repair instruction the model was given, in order. */
+    repairs: string[];
+    usage: ModelUsage;
+  }[];
+  /** Per round, the `repo:path` keys GATHER attempted. */
+  filesReadPerRound: string[][];
+  rounds: number;
+  stopReason: "sufficient" | "iteration_cap" | "no_readable_files";
+  /** Rationales replaced at FORMAT, and why. */
+  redactions: {
+    requirementVersionId: string;
+    reason: "code" | "ungrounded_citation";
+    detail?: string;
+  }[];
+  totalUsage: ModelUsage;
 };
 
 /**

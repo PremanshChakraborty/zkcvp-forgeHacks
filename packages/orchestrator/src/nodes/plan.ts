@@ -147,14 +147,23 @@ Return at most ${MAX_PLANNED_FILES} files.`;
         : null,
   });
 
-  const { accepted, dropped } = resolveFiles(result.filesToRead, trees);
+  const { accepted, dropped } = resolveFiles(result.value.filesToRead, trees);
 
   return {
     trees,
     changedFiles: changed,
     plannedFiles: accepted,
-    planReasoning: result.reasoning,
+    planReasoning: result.value.reasoning,
     droppedPaths: dropped,
     toolCallLog: toolCalls,
+    traceModelCalls: [
+      {
+        node: "plan",
+        round: 0,
+        attempts: result.attempts,
+        repairs: result.repairs,
+        usage: result.usage,
+      },
+    ],
   };
 }

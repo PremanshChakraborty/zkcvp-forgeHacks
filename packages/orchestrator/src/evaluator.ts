@@ -8,7 +8,12 @@
  * context rather than as state, so the token never enters a channel.
  */
 import crypto from "node:crypto";
-import { END, START, StateGraph } from "@langchain/langgraph";
+import {
+  END,
+  START,
+  StateGraph,
+  type LangGraphRunnableConfig,
+} from "@langchain/langgraph";
 import type {
   Evaluator,
   EvaluatorInput,
@@ -30,6 +35,40 @@ import {
 } from "./state";
 import { assertOneCommitPerRepo } from "./validation";
 
+type Node = (
+  state: EvaluatorState,
+  config: LangGraphRunnableConfig,
+) => Promise<EvaluatorUpdate>;
+
+/**
+ * Records the node's wall time into the trace.
+ *
+ * Only completed nodes are recorded: a node that throws ends the run, and a
+ * failed run produces no evidence for a trace to live in. FORMAT times itself,
+ * since the trace is assembled inside it.
+ */
+function timed(node: "plan" | "gather" | "analyze", fn: Node): Node {
+  return async (state, config) => {
+    const started = Date.now();
+    const update = await fn(state, config);
+    // GATHER opens a round (it increments the counter), so it runs in the
+    // round after the one the state names; ANALYZE runs in the round GATHER
+    // just opened.
+    const round = node === "plan" ? 0 : node === "gather" ? state.iterationCount + 1 : state.iterationCount;
+    return {
+      ...update,
+      traceNodes: [
+        {
+          node,
+          round,
+          startedAt: new Date(started).toISOString(),
+          durationMs: Date.now() - started,
+        },
+      ],
+    };
+  };
+}
+
 /**
  * The compiled graph.
  *
@@ -37,9 +76,9 @@ import { assertOneCommitPerRepo } from "./validation";
  * request would allocate the whole topology on every claim submission.
  */
 const graph = new StateGraph(EvaluatorAnnotation)
-  .addNode("plan", planNode)
-  .addNode("gather", gatherNode)
-  .addNode("analyze", analyzeNode)
+  .addNode("plan", timed("plan", planNode))
+  .addNode("gather", timed("gather", gatherNode))
+  .addNode("analyze", timed("analyze", analyzeNode))
   .addNode("format", formatNode)
   .addEdge(START, "plan")
   .addEdge("plan", "gather")

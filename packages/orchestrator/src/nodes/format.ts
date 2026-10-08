@@ -10,13 +10,14 @@
  * requirement set, so this node packages what it is given.
  */
 import type { LangGraphRunnableConfig } from "@langchain/langgraph";
-import type { EvidenceBundle, Report } from "@zkcvp/contracts";
+import type { EvidenceBundle, Report, RunTrace } from "@zkcvp/contracts";
 
 import { runContext } from "../context";
 import { containsCode } from "../guardrails/code-detector";
+import { addUsage } from "../llm";
 import type { EvaluatorState, EvaluatorUpdate } from "../state";
 
-const PROMPT_TEMPLATE_VERSION = "v2";
+export const PROMPT_TEMPLATE_VERSION = "v2";
 
 export type FormatResult = {
   evidence: EvidenceBundle;
@@ -26,12 +27,15 @@ export type FormatResult = {
 export function buildArtifacts(
   state: EvaluatorState,
   modelId: string,
+  startedAt: number = Date.now(),
 ): FormatResult {
   const { evaluationId, claimId, toolCallLog, verdicts } = state;
+  const redactions: RunTrace["redactions"] = [];
 
   // Guardrail Layer 3: validate no code in rationale.
   const sanitizedVerdicts = verdicts.map((v) => {
     if (containsCode(v.rationale)) {
+      redactions.push({ requirementVersionId: v.requirementVersionId, reason: "code" });
       return {
         ...v,
         rationale:
@@ -44,6 +48,27 @@ export function buildArtifacts(
     return v;
   });
 
+  const trace: RunTrace = {
+    nodes: [
+      ...state.traceNodes,
+      {
+        node: "format",
+        round: state.iterationCount,
+        startedAt: new Date(startedAt).toISOString(),
+        durationMs: Date.now() - startedAt,
+      },
+    ],
+    modelCalls: state.traceModelCalls,
+    filesReadPerRound: state.filesReadPerRound,
+    rounds: state.iterationCount,
+    // Only null if ANALYZE never ran, which the graph's edges rule out.
+    stopReason: state.stopReason ?? "sufficient",
+    redactions,
+    totalUsage: state.traceModelCalls
+      .map((c) => c.usage)
+      .reduce(addUsage, { inputTokens: 0, outputTokens: 0, totalTokens: 0 }),
+  };
+
   // Build EvidenceBundle (private — never shown to stakeholder).
   const evidence: EvidenceBundle = {
     evaluationId,
@@ -51,6 +76,7 @@ export function buildArtifacts(
     toolCallLog,
     planReasoning: state.planReasoning,
     droppedPaths: state.droppedPaths,
+    trace,
   };
 
   // Build Report (public — shown to stakeholder immediately).
@@ -83,6 +109,7 @@ export function formatNode(
 ): EvaluatorUpdate {
   // Resolving the context here keeps `Report.modelId` honest: it names the
   // model the run actually used, not a constant re-defaulted at the last step.
+  const startedAt = Date.now();
   const { modelId } = runContext(config);
-  return buildArtifacts(state, modelId);
+  return buildArtifacts(state, modelId, startedAt);
 }
