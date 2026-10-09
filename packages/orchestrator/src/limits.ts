@@ -28,6 +28,16 @@ export const MAX_TREE_ENTRIES_IN_PROMPT = 2_000;
 /** Transport attempts for a model call, including the first. */
 export const MAX_MODEL_ATTEMPTS = 3;
 
+/**
+ * Longest one model request may wait before it counts as a transport failure.
+ *
+ * Vertex occasionally accepts a request and never answers it. Without a bound
+ * that request waits out undici's 300s header timeout, which is the whole run
+ * budget, so a hang that a retry would have cleared became a failed run.
+ * Healthy calls finish in well under a minute.
+ */
+export const MODEL_CALL_TIMEOUT_MS = 90_000;
+
 /** Rounds of "your output was rejected, here is why" before giving up. */
 export const MAX_MODEL_REPAIRS = 2;
 
