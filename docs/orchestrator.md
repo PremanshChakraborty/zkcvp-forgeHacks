@@ -230,9 +230,9 @@ contract.
 |---|---|
 | `EVAL_CEILING_SECONDS` | Budget for one run. Default 300. |
 | `EVAL_MODEL_ID` | Which Gemini model to use. Default `gemini-3.5-flash`. Recorded in every report. |
-| `GOOGLE_API_KEY` | Read by LangChain directly. |
+| `GOOGLE_API_KEY` | A Vertex AI API key (express mode), read by LangChain directly. Usage bills the key's Cloud project. An AI Studio key does not work here. |
 
-The provider is Gemini and isn't configurable. Only the model id is.
+The provider is Gemini on Vertex AI and isn't configurable. Only the model id is.
 
 ---
 

@@ -10,8 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@langchain/core": "^1.2.4",
-    "@langchain/google-genai": "^2.2.0",
+    "@langchain/core": "^1.2.17",
+    "@langchain/google-vertexai": "^2.3.2",
     "@langchain/langgraph": "^1.4.9",
     "@zkcvp/contracts": "*",
     "zod": "^4.4.3"

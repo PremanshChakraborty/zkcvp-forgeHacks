@@ -14,7 +14,7 @@
  *   back and the model is asked to correct it.
  */
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatVertexAI } from "@langchain/google-vertexai";
 import { EvaluationError, type ModelUsage } from "@zkcvp/contracts";
 import type { z } from "zod";
 
@@ -30,11 +30,16 @@ import { MAX_MODEL_ATTEMPTS, MAX_MODEL_REPAIRS } from "./limits";
  * not, because nothing here needs a second one and routing between providers
  * bought complexity no caller had asked for.
  *
+ * Served by Vertex AI in express mode: GOOGLE_API_KEY, read by LangChain
+ * directly, is a Vertex API key, which bills the Cloud project it belongs to.
+ * ChatVertexAI pins the Vertex endpoint, so an AI Studio key fails loudly
+ * instead of quietly routing to the free tier.
+ *
  * `temperature: 0`: two runs over identical evidence should not disagree
  * because of sampling.
  */
-export function chatModel(modelId: string): ChatGoogleGenerativeAI {
-  return new ChatGoogleGenerativeAI({ model: modelId, temperature: 0 });
+export function chatModel(modelId: string): ChatVertexAI {
+  return new ChatVertexAI({ model: modelId, temperature: 0 });
 }
 
 const BASE_BACKOFF_MS = 400;
