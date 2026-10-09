@@ -19,7 +19,7 @@ import { EvaluationError, type ModelUsage } from "@zkcvp/contracts";
 import type { z } from "zod";
 
 import { assertBudget } from "./context";
-import { MAX_MODEL_ATTEMPTS, MAX_MODEL_REPAIRS } from "./limits";
+import { MAX_MODEL_ATTEMPTS, MAX_MODEL_REPAIRS, MODEL_CALL_TIMEOUT_MS } from "./limits";
 
 /**
  * The chat model for a run.
@@ -105,6 +105,12 @@ export function addUsage(a: ModelUsage, b: ModelUsage): ModelUsage {
   };
 }
 
+/** The caller's signal, plus a bound on this one attempt. */
+function attemptSignal(signal: AbortSignal | undefined): AbortSignal {
+  const timeout = AbortSignal.timeout(MODEL_CALL_TIMEOUT_MS);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+}
+
 /**
  * Invoke a model for structured output, retrying transport and repairing
  * semantics, inside the run's remaining budget.
@@ -142,7 +148,7 @@ export async function invokeStructured<T>({
         .withStructuredOutput(schema, { includeRaw: true })
         .invoke(
           system ? [new SystemMessage(system), new HumanMessage(text)] : text,
-          { signal },
+          { signal: attemptSignal(signal) },
         )) as { raw: unknown; parsed: T | null };
       usage = addUsage(usage, usageOf(out.raw));
       if (out.parsed === null || out.parsed === undefined) {
@@ -150,7 +156,10 @@ export async function invokeStructured<T>({
       }
       result = out.parsed;
     } catch (err: unknown) {
-      if (err instanceof Error && err.name === "AbortError") throw err;
+      // Only the caller's own cancellation ends the run here. An attempt that
+      // hit its own timeout is a hung request, and gets retried like any other
+      // transport failure.
+      if (signal?.aborted) throw err;
 
       transportAttempts++;
       if (transportAttempts >= MAX_MODEL_ATTEMPTS) {
