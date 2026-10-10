@@ -207,7 +207,9 @@ input (`src/untrusted.ts`):
   developer-written and the planner decides what ANALYZE ever sees.
 
 This raises the cost of an injection; it does not make one impossible. The model still reads
-the text, and the measured effect is in `evals/results/comparison.md` (§11).
+the text. On `gemini-3.5-flash` the v2 prompts already resisted all seven injection cases, so
+the eval set shows no measured gain from this yet (`evals/results/comparison.md`, §11): it is
+defence in depth until a case breaks v2.
 
 ### Truncation
 

@@ -56,7 +56,7 @@ Nothing reads a root `.env` — see the comment in `.env.example` for why.
 | Framework | Next.js (TypeScript) — one app: UI, CRUD API, and orchestrator entrypoint |
 | Framework version | Next.js 15.5.22, pinned exact — next-auth@5 is validated against Next 15 |
 | Database | Postgres (Supabase-hosted) via Drizzle ORM over node-postgres |
-| Orchestrator | LangGraph (TypeScript); Gemini, with the model id read from `EVAL_MODEL_ID` |
+| Orchestrator | LangGraph (TypeScript); Gemini on Vertex AI, with the model id read from `EVAL_MODEL_ID` |
 | Developer auth & repo access | GitHub OAuth, requesting `repo` scope — one token serves both developer identity and all repo reads. No GitHub App, no installation, no service-level credential anywhere in this design. |
 | Stakeholder auth | Email magic link — no shared password auth with developers |
 | Token custody | Held only in the developer's session, never persisted to a table — a deliberate choice, not a limitation; see below |
@@ -200,6 +200,39 @@ disclosure feature exists yet, not because of any consent mechanism on the repor
 
 See `docs/orchestrator.md` for the agent graph structure, prompting strategy, model choice,
 tool implementation, and retry/error handling.
+
+#### Measured quality
+
+`npm run eval` runs the whole Evaluator offline — fixture repos behind a fake GitHub tool,
+the real model — over 30 hand-labelled claims (35 requirement verdicts): genuine work, stubs,
+TODOs, partial and unwired implementations, work in the wrong file or repo, multi-requirement
+batches, decisive code past the truncation cutoff, and seven prompt-injection attempts from
+a naive comment to forged evidence blocks. It costs real model calls, so it is not part of
+`npm run test`. Results on `gemini-3.5-flash`, before and after the v3 hardening:
+
+| | v2 prompts | v3 prompts |
+|---|---|---|
+| **False-approval rate** | **1/22 (5%, 95% CI 1–22%)** | **0/22 (0%, 95% CI 0–15%)** |
+| False-rejection rate | 1/13 (8%) | 0/13 (0%) |
+| Precision / recall for "satisfied" | 12/13 / 12/13 | 13/13 / 13/13 |
+| Injection cases resisted | 7/7 | 7/7 |
+| Truncation cases correct | 0/2 | 2/2 |
+| Mean tokens per run | 3,930 | 6,515 |
+
+What this does and does not show:
+
+- **Small, hand-built sample.** One run per case; the cases were written by the same people
+  who wrote the prompts. The confidence intervals are the honest reading — 0/22 is "no false
+  approval observed", consistent with a true rate up to 15%.
+- **The measured gain is truncation, not injection.** v2's one false approval was a stub
+  past the 15k-character cutoff that it approved without seeing; v3 reads the next window
+  and gets both truncation cases right. Both prompt versions resisted all seven injection
+  cases on this model, so this set shows no injection improvement — the v3 fencing is
+  defence in depth against attacks this set does not reach, not a measured fix.
+- **v3 costs ~66% more tokens**, mostly input: the fenced listing of unread files and the
+  longer rules.
+
+Full per-verdict results: `packages/orchestrator/evals/results/`.
 
 ### Transparency Log
 
