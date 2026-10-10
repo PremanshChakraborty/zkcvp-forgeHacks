@@ -10,7 +10,9 @@ const CODE_PATTERNS: RegExp[] = [
   /```[\s\S]*?```/,                         // fenced code blocks
   /^\s{4,}\S/m,                              // indented code (4+ spaces at line start)
   /(?:import|export|from)\s+['"@{]/,        // import/export statements
-  /(?:const|let|var|function|class)\s+\w+/,  // declarations
+  // declarations — shaped like code (`const x =`, `function f(`, `class A {`),
+  // since "the function that…" and "the class of…" are ordinary rationale prose
+  /\b(?:(?:const|let|var)\s+\w+\s*[=:]|function(?:\s+\w+)?\(|class\s+\w+(?:\s+extends\s+\w+)?\s*\{)/,
   /=>\s*[{(]/,                               // arrow functions
   /\b\w+\.\w+\([^)]*\)/,                    // method calls like obj.method()
   /[{};]\s*$/m,                              // lines ending with { } ;

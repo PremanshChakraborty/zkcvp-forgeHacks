@@ -21,6 +21,10 @@ describe("containsCode", () => {
       "Watchlist behaviour appears in three places: the route handler, the store, and the component that renders it.",
       "The class of problem here is that no migration exists for the table the requirement describes.",
       "Satisfied — see packages/db/src/schema/requirements.ts for the versioning approach.",
+      // Real rationales that the old declaration and return patterns redacted together.
+      "In apps/web/lib/claims/rate-limit.ts, the helper function that is supposed to query the database and count the number of recent claims for a developer within the hourly window is hardcoded to always return zero. Consequently, the rate limit check in apps/web/app/api/projects/[projectId]/claims/route.ts will always evaluate to allowed, meaning the limit of five claims per hour is never enforced and submissions are never rejected with an HTTP 429 status.",
+      "However, the rate-limiting logic in apps/web/lib/claims/rate-limit.ts (lines 20-39) is not fully implemented. Specifically, the helper function responsible for querying the database is a stub that unconditionally returns zero.",
+      "The function (lines 34-41) creates a new claim for every request and will return early only when the session is missing.",
     ];
 
     for (const text of allowed) {
