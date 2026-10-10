@@ -25,7 +25,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZKCVP",
+  title: "CVP",
   description:
     "Independent machine attestation over real source at pinned commits.",
 };

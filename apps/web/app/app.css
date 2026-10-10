@@ -66,6 +66,9 @@
    Mono because every identifier this product shows is mono, and the product's
    own name is the first of them. */
 .app-header__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lg-space-2);
   font-family: var(--lg-font-mono);
   font-size: var(--lg-text-300);
   font-weight: var(--lg-weight-semibold);
@@ -78,6 +81,19 @@
 .app-header__mark:hover {
   color: var(--lg-text-secondary);
   text-decoration: none;
+}
+
+/* The logo PNG is an opaque white glyph on black, so it is used as a luminance
+   mask and painted with the text colour: it follows the theme and the hover
+   state like the word beside it, instead of showing as a black square on a
+   light bar. */
+.app-header__logo {
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: currentColor;
+  mask: url("../assets/Branch · logo, white on black@1x.png") center / 160%
+    no-repeat luminance;
 }
 
 /* A hairline between the mark and what follows it, so the left of the bar reads

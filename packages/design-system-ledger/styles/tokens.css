@@ -411,9 +411,9 @@
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --lg-canvas: #141413;
-    --lg-surface: #1c1c1a;
-    --lg-well: #0e0e0d; /* still darker than the canvas */
+    --lg-canvas: #0d0d0d;
+    --lg-surface: #161616;
+    --lg-well: #080808; /* still darker than the canvas */
     --lg-hover: #262623;
     --lg-active: #2f2f2b;
     --lg-overlay: rgba(8, 8, 7, 0.66);
@@ -495,9 +495,9 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --lg-canvas: #141413;
-  --lg-surface: #1c1c1a;
-  --lg-well: #0e0e0d;
+  --lg-canvas: #0d0d0d;
+  --lg-surface: #161616;
+  --lg-well: #080808;
   --lg-hover: #262623;
   --lg-active: #2f2f2b;
   --lg-overlay: rgba(8, 8, 7, 0.66);

@@ -20,8 +20,9 @@ import { signOutAction } from "./sign-out";
  * Three things carry the redesign, and all three are structural rather than
  * decorative:
  *
- *   1. The mark is a lockup, not a word. `ZKCVP` is set in the mono face at
- *      label tracking with a hairline and the one global destination beside it,
+ *   1. The mark is a lockup, not a word. The logo glyph and `CVP`, set in the
+ *      mono face at label tracking, with a hairline and the one global
+ *      destination beside it,
  *      so the left of the bar reads as an identity followed by a place rather
  *      than as a link that happens to be bold.
  *   2. The viewer is ONE object. A chip, a name and a button sitting in a row
@@ -42,7 +43,8 @@ export async function AppHeader() {
           {/* Home is /projects, not /. `/` only redirects here anyway, and a
               mark that lands on a redirect flickers. */}
           <Link href="/projects" className="app-header__mark">
-            ZKCVP
+            <span className="app-header__logo" aria-hidden="true" />
+            CVP
           </Link>
           {viewer && (
             <>
