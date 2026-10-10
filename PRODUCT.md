@@ -101,10 +101,9 @@ Conflating those two is the single most damaging thing any surface could do.
 
 ## Brand Commitments
 
-Name: **ZKCVP**.
+Name: **CVP**.
 
-The "zero-knowledge" in that name is positioning language and **not a technical claim.** These
-are binding and apply to every surface, including marketing copy:
+These are binding and apply to every surface, including marketing copy:
 
 - Never imply cryptographic zero-knowledge proofs or zkML exist anywhere in this system.
 - Never imply on-chain smart-contract execution. If the transparency log ever anchors a

@@ -36,6 +36,13 @@ npm run verify   # typecheck + full test suite (hits the real DB) + design-syste
 
 Nothing reads a root `.env` — see the comment in `.env.example` for why.
 
+## Demo branch
+
+`demo/simulated-fraud-attempts` holds deliberately fake commits used in the demo video, and is
+never merged. Its claim-submission rate limiter looks complete but never counts anything, and its
+second commit adds a comment telling AI reviewers to mark the requirement satisfied — a
+simulated dishonest developer, for the Evaluator to catch.
+
 ## Project conventions
 
 - This file is the map: high-level shape only, no implementation detail.
