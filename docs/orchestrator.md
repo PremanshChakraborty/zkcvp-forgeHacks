@@ -355,9 +355,10 @@ npm run eval -- --compare=v2,v3           # side by side + dashboard, no model c
 - `results/<promptTemplateVersion>.{json,md}` — one committed snapshot per prompt version, with
   the git SHA it ran at. `v2` is the pre-hardening baseline; reproduce it by checking out that
   SHA (tagged `eval/v2-baseline`). `comparison.md` is the before/after, and `dashboard.html` the
-  same comparison as one self-contained page — headline rates with intervals, every verdict by
-  category, the injection cases, and a per-case explorer showing each run's trace beside its
-  fixture. `dashboard.ts` renders it from the stored results; it calls no model.
+  same comparison as one self-contained page in the Ledger style — the headline, before/after
+  rates with intervals, the injection cases, and a per-case explorer that shows one prompt
+  version at a time: verdicts, rationale, a per-round table of files read, time and tokens, and
+  the fixture repo. `dashboard.ts` renders it from the stored results; it calls no model.
 
 Runs are sequential with a pause between them and back off on provider quota errors. A full
 pass is roughly 75 model calls.
