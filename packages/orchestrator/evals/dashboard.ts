@@ -447,9 +447,11 @@ details.fixture .fname .tag { color: var(--accent); margin-left: 6px; }
     return det;
   }
 
+  function fromHash() { var m = /case=([\\w-]+)/.exec(location.hash); return m && CASES[m[1]] ? m[1] : null; }
+  window.addEventListener("hashchange", function () { var id = fromHash(); if (id && id !== selected) open(id, true); });
+
   renderFilters();
-  var m = /case=([\\w-]+)/.exec(location.hash);
-  open(m && CASES[m[1]] ? m[1] : (ORDER.filter(differs)[0] || ORDER[0]), false);
+  open(fromHash() || ORDER.filter(differs)[0] || ORDER[0], false);
 })();
 </script>
 </body>
