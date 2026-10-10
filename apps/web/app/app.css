@@ -321,3 +321,277 @@
   line-height: 0;
   color: var(--lg-warning);
 }
+
+/* -----------------------------------------------------------------------------
+   Setup guide — the first-run empty state of /projects
+
+   A map of who does what, not a checklist. Three lanes (stakeholder, developer,
+   evaluator) cross five step columns, so the handoffs between accounts read as
+   movement between rows. The viewer's own steps are in full ink; the rest are
+   context in secondary text, because on a first visit half of this path is in
+   someone else's account and the guide must not suggest otherwise.
+
+   Square, hairline-ruled, mono for numbers only — the Ledger world, built from
+   its tokens rather than its components where the components had no shape for
+   a lane.
+   ----------------------------------------------------------------------------- */
+.app-guide {
+  display: grid;
+  gap: var(--lg-space-7);
+}
+
+.app-guide__intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  gap: var(--lg-space-7);
+  align-items: start;
+}
+
+.app-guide__lede {
+  display: grid;
+  gap: var(--lg-space-4);
+  max-width: 36rem;
+}
+
+.app-guide__title {
+  margin: 0;
+  font-size: var(--lg-text-700);
+  line-height: var(--lg-text-700-lh);
+  font-weight: var(--lg-weight-semibold);
+  letter-spacing: var(--lg-tracking-display);
+  color: var(--lg-text);
+  text-wrap: balance;
+}
+
+.app-guide__text {
+  margin: 0;
+  font-size: var(--lg-text-400);
+  line-height: var(--lg-text-400-lh);
+  color: var(--lg-text-secondary);
+  max-width: var(--lg-measure);
+}
+
+.app-guide__action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lg-space-3) var(--lg-space-4);
+  margin-top: var(--lg-space-2);
+}
+
+.app-guide__hint {
+  font-size: var(--lg-text-200);
+  line-height: var(--lg-text-200-lh);
+  color: var(--lg-text-muted);
+}
+
+/* The developer has no first move on this page, so the action slot says what
+   they are waiting for instead of offering a button that would lie. Dashed, the
+   system's mark for "nothing here yet". */
+.app-guide__waiting {
+  margin-top: var(--lg-space-2);
+  padding: var(--lg-space-4);
+  border: 1px dashed var(--lg-rule-strong);
+  border-radius: var(--lg-radius);
+}
+
+.app-guide__waiting-title {
+  margin: 0 0 var(--lg-space-1);
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+  font-weight: var(--lg-weight-semibold);
+  color: var(--lg-text);
+}
+
+.app-guide__waiting-text {
+  margin: 0;
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+  color: var(--lg-text-secondary);
+}
+
+.app-guide__example {
+  display: grid;
+  gap: var(--lg-space-2);
+  margin: 0;
+}
+
+.app-guide__example-caption,
+.app-guide__step-n,
+.app-guide__step-note,
+.app-guide__yours,
+.app-guide__lane-how {
+  font-family: var(--lg-font-mono);
+  font-size: var(--lg-text-50);
+  line-height: var(--lg-text-50-lh);
+  letter-spacing: var(--lg-tracking-label);
+  text-transform: uppercase;
+}
+
+.app-guide__example-caption {
+  color: var(--lg-text-muted);
+}
+
+.app-guide__example-note {
+  margin: 0;
+  font-size: var(--lg-text-100);
+  line-height: var(--lg-text-100-lh);
+  color: var(--lg-text-muted);
+}
+
+/* The map. One grid holds the lane labels, the lane rails and the steps; the
+   <ol> is `display: contents` so its items can take grid cells directly while
+   the list keeps its semantics. */
+.app-guide__map {
+  display: grid;
+  grid-template-columns: 10rem repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(3, auto);
+  column-gap: var(--lg-space-3);
+  border-top: 1px solid var(--lg-rule-ink);
+}
+
+.app-guide__steps {
+  display: contents;
+  list-style: none;
+}
+
+/* A lane is a full-width row: its label in the first column, and a dashed rail
+   running behind the step columns so a lane with only one or two steps still
+   reads as a track rather than as a stray card. */
+.app-guide__lane {
+  grid-column: 1 / -1;
+  grid-row: var(--row);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--lg-space-1);
+  min-height: 9.5rem;
+  border-bottom: 1px solid var(--lg-rule);
+  background:
+    linear-gradient(var(--lg-rule-strong), var(--lg-rule-strong)) 10.75rem 50% /
+      calc(100% - 10.75rem) 1px no-repeat;
+}
+
+.app-guide__lane[data-own] {
+  background-image: linear-gradient(var(--lg-text-muted), var(--lg-text-muted));
+}
+
+.app-guide__lane-how {
+  color: var(--lg-text-faint);
+}
+
+.app-guide__step {
+  grid-column: var(--col);
+  grid-row: var(--row);
+  /* Stretched, so every card in a lane is the lane's height and the row reads
+     as one track instead of a ragged line of boxes. */
+  align-self: stretch;
+  z-index: 1;
+  display: grid;
+  align-content: start;
+  gap: var(--lg-space-1);
+  margin-block: var(--lg-space-4);
+  padding: var(--lg-space-3) var(--lg-space-4) var(--lg-space-4);
+  border: 1px solid var(--lg-rule);
+  border-radius: var(--lg-radius);
+  background: var(--lg-surface);
+}
+
+.app-guide__step[data-own] {
+  border-color: var(--lg-rule-ink);
+}
+
+.app-guide__step-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--lg-space-2);
+  margin-bottom: var(--lg-space-1);
+}
+
+.app-guide__step-n {
+  color: var(--lg-text-muted);
+}
+
+.app-guide__step-note {
+  margin-top: calc(-1 * var(--lg-space-1));
+  margin-bottom: var(--lg-space-1);
+  color: var(--lg-text-faint);
+}
+
+.app-guide__yours {
+  color: var(--lg-text);
+  white-space: nowrap;
+}
+
+.app-guide__step-lane {
+  display: none;
+}
+
+.app-guide__step-title {
+  margin: 0;
+  font-size: var(--lg-text-300);
+  line-height: var(--lg-text-300-lh);
+  font-weight: var(--lg-weight-semibold);
+  color: var(--lg-text-secondary);
+}
+
+.app-guide__step[data-own] .app-guide__step-title {
+  color: var(--lg-text);
+}
+
+.app-guide__step-body {
+  margin: 0;
+  font-size: var(--lg-text-200);
+  line-height: var(--lg-text-200-lh);
+  color: var(--lg-text-muted);
+}
+
+.app-guide__step[data-own] .app-guide__step-body {
+  color: var(--lg-text-secondary);
+}
+
+/* Five columns stop holding a sentence each well before the design system's own
+   breakpoint. Below this the lanes go, and the path becomes one ordered column
+   with each step carrying its lane as a tag. */
+@media (max-width: 1024px) {
+  .app-guide__intro {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lg-space-6);
+  }
+
+  .app-guide__example {
+    max-width: 30rem;
+  }
+
+  .app-guide__map {
+    display: block;
+    border-top: 0;
+  }
+
+  .app-guide__lane {
+    display: none;
+  }
+
+  .app-guide__steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--lg-space-3);
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Back into flow. Left on their lane coordinates, the steps would make the
+     stacked grid grow implicit columns and push the page sideways. */
+  .app-guide__step {
+    grid-column: auto;
+    grid-row: auto;
+    margin: 0;
+  }
+
+  .app-guide__step-lane {
+    display: block;
+    margin-bottom: var(--lg-space-1);
+  }
+}

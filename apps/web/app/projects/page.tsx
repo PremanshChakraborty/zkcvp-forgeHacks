@@ -5,7 +5,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  EmptyState,
   PageHeader,
   Table,
   Td,
@@ -13,6 +12,7 @@ import {
 import { getDb } from "../../lib/db";
 import { requireSession } from "../../lib/auth/session";
 import { listProjects } from "../../lib/projects/service";
+import { SetupGuide } from "./SetupGuide";
 
 /** Absolute dates throughout this product, never relative. */
 const dateFormat = new Intl.DateTimeFormat("en-GB", {
@@ -39,11 +39,7 @@ export default async function ProjectsPage() {
       />
 
       {projects.length === 0 ? (
-        <EmptyState title="No projects yet">
-          {session.kind === "stakeholder"
-            ? "Create a project to start a requirement checklist."
-            : "You will see a project here once a stakeholder adds you to one."}
-        </EmptyState>
+        <SetupGuide role={session.kind} />
       ) : (
         <Card flush>
           <CardHeader
