@@ -11,6 +11,7 @@ import { createGitHubReadTool } from "@zkcvp/github/read-tool";
 import { LangGraphEvaluator, type EvaluationProgress } from "@zkcvp/orchestrator";
 import { encodeFrame, type ClaimFrame } from "../../../../../lib/claims/frames";
 import { createClaim, recordEvaluation } from "../../../../../lib/claims/service";
+import { checkClaimRateLimit } from "../../../../../lib/claims/rate-limit";
 import { errorResponse } from "../../../../../lib/api/respond";
 import { parseBody } from "../../../../../lib/api/parse";
 import { getDb } from "../../../../../lib/db";
@@ -83,6 +84,20 @@ export async function POST(
   try {
     const { projectId } = await params;
     const session = await requireSession();
+    if (session.kind === "developer") {
+      const decision = await checkClaimRateLimit(db, session.developerId, projectId);
+      if (!decision.allowed) {
+        return Response.json(
+          {
+            error: {
+              code: "rate_limited",
+              message: "Too many claims submitted to this project. Try again later.",
+            },
+          },
+          { status: 429, headers: { "Retry-After": String(decision.retryAfterSeconds) } },
+        );
+      }
+    }
     const body = await parseBody(req, submitSchema);
     claim = await createClaim(db, session, projectId, body);
     if (session.kind !== "developer") throw new Error("unreachable: createClaim asserts developer");
