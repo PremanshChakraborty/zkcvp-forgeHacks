@@ -276,7 +276,7 @@ pre.code { margin: 0; padding: 1rem; background: var(--well); font: 0.75rem/1.25
   <ul class="findings" id="findings"></ul>
 
   <h2>Before and after</h2>
-  <p class="lede">The same 30 cases, the same model, two prompt versions. Ranges are 95% intervals: the honest width of what a sample this size can show.</p>
+  <p class="lede">The same 30 cases, the same model, two prompt versions. V3 has extra injection hardening, truncation awareness and strictness.</p>
   <hr class="section-rule">
   <div class="table-scroll"><table class="metrics" id="metrics"></table></div>
 
