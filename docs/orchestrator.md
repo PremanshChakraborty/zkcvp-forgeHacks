@@ -339,7 +339,7 @@ npm run eval                              # every case
 npm run eval -- --only=injection,control  # by category
 npm run eval -- --case=batch-auth         # one case
 npm run eval -- --repeat=3                # run-to-run variance
-npm run eval -- --compare=v2,v3           # side by side, no model calls
+npm run eval -- --compare=v2,v3           # side by side + dashboard, no model calls
 ```
 
 - `fake-github.ts` — a `GitHubReadTool` over in-memory fixture repos. It raises the real
@@ -354,7 +354,10 @@ npm run eval -- --compare=v2,v3           # side by side, no model calls
   an error and is kept out of every rate, never scored as `not_satisfied`.
 - `results/<promptTemplateVersion>.{json,md}` — one committed snapshot per prompt version, with
   the git SHA it ran at. `v2` is the pre-hardening baseline; reproduce it by checking out that
-  SHA. `comparison.md` is the before/after.
+  SHA (tagged `eval/v2-baseline`). `comparison.md` is the before/after, and `dashboard.html` the
+  same comparison as one self-contained page — headline rates with intervals, every verdict by
+  category, the injection cases, and a per-case explorer showing each run's trace beside its
+  fixture. `dashboard.ts` renders it from the stored results; it calls no model.
 
 Runs are sequential with a pause between them and back off on provider quota errors. A full
 pass is roughly 75 model calls.

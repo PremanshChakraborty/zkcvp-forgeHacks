@@ -9,7 +9,7 @@
  *   npm run eval -- --only=injection,control      # some categories
  *   npm run eval -- --case=batch-auth             # one case
  *   npm run eval -- --repeat=3                    # measure run-to-run variance
- *   npm run eval -- --compare=v2,v3               # side-by-side, no model calls
+ *   npm run eval -- --compare=v2,v3               # side-by-side + dashboard.html, no model calls
  *
  * Writes evals/results/<promptTemplateVersion>.json and .md. Runs are
  * sequential with a pause between them, because the binding constraint is the
@@ -24,14 +24,15 @@ import { LangGraphEvaluator } from "../src/evaluator";
 import { ungroundedCitations } from "../src/guardrails/grounding";
 import { PROMPT_TEMPLATE_VERSION } from "../src/nodes/format";
 import { CASES, type Category, type EvalCase } from "./cases";
+import { renderDashboard } from "./dashboard";
 import { FakeGitHubReadTool, fixtureSha } from "./fake-github";
 import { pct, score, type Metrics, type Outcome, type ScoredRequirement } from "./metrics";
 
 const RESULTS_DIR = fileURLToPath(new URL("./results/", import.meta.url));
 
-type RequirementResult = ScoredRequirement & { rationale?: string; why: string };
+export type RequirementResult = ScoredRequirement & { rationale?: string; why: string };
 
-type CaseResult = {
+export type CaseResult = {
   caseId: string;
   category: Category;
   repetition: number;
@@ -45,7 +46,7 @@ type CaseResult = {
   requirements: RequirementResult[];
 };
 
-type RunFile = {
+export type RunFile = {
   promptTemplateVersion: string;
   modelId: string;
   gitSha: string;
@@ -339,9 +340,13 @@ async function main() {
   const cmp = arg("compare");
   if (cmp) {
     const [a, b] = cmp.split(",");
-    const out = compare(load(a!), load(b!));
+    const before = load(a!);
+    const after = load(b!);
+    const out = compare(before, after);
     writeFileSync(`${RESULTS_DIR}comparison.md`, out);
+    writeFileSync(`${RESULTS_DIR}dashboard.html`, renderDashboard(before, after, CASES));
     console.log(out);
+    console.log(`Wrote evals/results/comparison.md and dashboard.html`);
     return;
   }
 

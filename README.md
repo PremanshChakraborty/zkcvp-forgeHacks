@@ -1,4 +1,4 @@
-# ZKCVP
+# CVP
 
 Lets developers give stakeholders verifiable progress updates without granting them
 direct access to a private repo. A stakeholder defines requirements as a checklist; a
@@ -6,11 +6,10 @@ developer claims that specific commits satisfy a specific requirement; an LLM-ba
 agent independently reads the actual code at those commits and renders a verdict; the
 result is recorded and (eventually) made tamper-evident via an independent log.
 
-## Naming & trust model — read before assuming otherwise
+## Trust model — read before assuming otherwise
 
-"Zero-knowledge" in the project name is positioning language, not a technical claim —
-**no cryptographic ZK proofs exist anywhere in this design.** The actual trust mechanism
-has two independent parts, and it matters to keep them distinct:
+**No cryptographic proofs exist anywhere in this design.** The trust mechanism has two
+independent parts, and it matters to keep them distinct:
 
 1. An LLM agent reads real code and reports its own judgment. This is not, and cannot
    currently be made, cryptographically verifiable — see the Evaluator contract below.
@@ -232,7 +231,8 @@ What this does and does not show:
 - **v3 costs ~66% more tokens**, mostly input: the fenced listing of unread files and the
   longer rules.
 
-Full per-verdict results: `packages/orchestrator/evals/results/`.
+Full per-verdict results: `packages/orchestrator/evals/results/` — open `dashboard.html` there
+for the interactive view.
 
 ### Transparency Log
 
